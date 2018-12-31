@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<!--
+Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0
+-->
+
+<modelVersion>4.0.0</modelVersion>
+
+<groupId>com.rfacad.jjmpc</groupId>
+<artifactId>jjmpc</artifactId>
+<version>0.01-SNAPSHOT</version>
+
+<name>JJMPC</name>
+<description>A Joystick-controlled MPD client</description>
+
+<licenses>
+	<license>
+		<name>Apache License 2.0</name>
+		<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		<distribution>repo</distribution>
+	</license>
+</licenses>
+
+
+<properties>
+	<jdkVersion>1.7</jdkVersion>
+	<maven.compiler.source>1.7</maven.compiler.source>
+	<maven.compiler.target>1.7</maven.compiler.target>
+</properties>
+
+<dependencies>
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.0</version>
+		<type>jar</type>
+		<scope>test</scope>
+		<optional>true</optional>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-api</artifactId>
+		<version>2.11.0</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-core</artifactId>
+		<version>2.11.0</version>
+	</dependency>
+</dependencies>
+
+<build>
+	<defaultGoal>install</defaultGoal>
+</build>
+
+</project>
