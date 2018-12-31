@@ -10,10 +10,14 @@ public class ButtonMapper implements RidiculouslySimpleJoystickDriver.RSJDListen
 	public static Integer POSITIVE=0x20000;
 	public static Integer ANY=0x7777777;
 
+	public static short NO_SHIFT=0; // obvious, really
 	public static short AT_LEAST_ONE_SHIFT=0x100;
 	public static short ANY_SHIFT_STATE=0x200;
 
 	public static String SHIFT="SHIFTS";
+
+	// What to do when there is an error
+	private ButtonCommand errHandler;
 
 	// Map<buttonid, prevvaluemap>
 	// prevvaluemap is SortedMap<Integer,nextvaluemap>
@@ -55,6 +59,7 @@ public class ButtonMapper implements RidiculouslySimpleJoystickDriver.RSJDListen
 	public ButtonMapper()
 	{
 		mapping=new HashMap<>();
+		errHandler=null;
 	}
 
 	public void button(short id,short prev,short value)
@@ -103,9 +108,9 @@ public class ButtonMapper implements RidiculouslySimpleJoystickDriver.RSJDListen
 		}
 	}
 
-	public void map(int id,int prev,int value,short shiftstate,ButtonCommand cmd)
+	public void map(int id,int prev,int value,short shiftstate,ButtonCommand ... cmd)
 	{
-		map(id,prev,value,shiftstate,Collections.singletonList(cmd));
+		map(id,prev,value,shiftstate,Arrays.asList(cmd));
 	}
 
 	public synchronized void map(int id,int prev,int value,short shiftstate,List<ButtonCommand> commands)
@@ -129,13 +134,24 @@ public class ButtonMapper implements RidiculouslySimpleJoystickDriver.RSJDListen
 		shiftmap.put(shiftstate,commands);
 	}
 
+	public void onError(ButtonCommand c) {
+		errHandler=c;
+	}
+
 	protected void execute(List<ButtonCommand> commands,BState state)
 	{
 		for(ButtonCommand cmd:commands)
 		{
 			if ( cmd != null )
 			{
-				cmd.button(state);
+				boolean ok = cmd.button(state);
+				if ( ! ok )
+				{
+					if (errHandler!=null) {
+						errHandler.button(state);
+					}
+					return;
+				}
 			}
 		}
 	}
