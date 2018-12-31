@@ -3,9 +3,14 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class RidiculouslySimpleMPDClient implements Runnable
 {
+	private static final Logger log = LogManager.getLogger(RidiculouslySimpleMPDClient.class);
+
 	public interface RSMPDListener
 	{
 		/** @param responses Response text, up to but not including 'OK'. Newlines removed. May be empty, but not null */
@@ -70,6 +75,7 @@ public class RidiculouslySimpleMPDClient implements Runnable
 
 	public void run()
 	{
+		log.info("MPD Client thread starting.");
 		while(keepgoing)
 		{
 			if ( pauseForRetry )
@@ -92,6 +98,7 @@ public class RidiculouslySimpleMPDClient implements Runnable
 				e.printStackTrace();
 			}
 		}
+		log.info("MPD Client thread ending.");
 	}
 
 	public void sendCommand(String command) throws IOException

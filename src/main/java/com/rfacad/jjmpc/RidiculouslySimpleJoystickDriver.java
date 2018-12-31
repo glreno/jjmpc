@@ -41,6 +41,7 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 
 	public void run()
 	{
+		log.info("Joystick thread starting.");
 		while(keepgoing)
 		{
 			if ( pauseForRetry )
@@ -63,6 +64,7 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 				log.error(e);
 			}
 		}
+		log.info("Joystick thread ending.");
 	}
 	
 	protected BufferedInputStream openStream() throws IOException
@@ -94,14 +96,19 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 				{
 					// The first four bytes are a sequence number,
 					// and I'm going to ignore it.
-/*
-for(int i=0;i<8;i++) {
-	if ( (buf[i]&0xff) < 16 ) System.err.print('0');
-	System.err.print(Integer.toHexString(buf[i]&0xff));
-	if ( i%2 != 0 ) System.err.print(' ');
-}
-System.err.println();
-*/
+
+					if ( log.isTraceEnabled() )
+					{
+						StringBuilder s=new StringBuilder(26);
+						s.append("Btn: ");
+						for(int i=0;i<8;i++) {
+							if ( (buf[i]&0xff) < 16 ) s.append('0');
+							s.append(Integer.toHexString(buf[i]&0xff));
+							if ( i%2 != 0 ) s.append(' ');
+						}
+						log.trace(s);
+					}
+					
 					short id=mkshort(buf[7],buf[6]);
 					short value=mkshort(buf[5],buf[4]);
 					report(id,value);
@@ -133,6 +140,11 @@ System.err.println();
 
 	protected void report(short id,short value)
 	{
+		if ( log.isDebugEnabled() )
+		{
+			log.debug("Button pressed: "+hex(id)+" value="+hex(value));
+		}
+		
 		if ( cache == null )
 		{
 			cache=new HashMap<Short,Short>();
@@ -165,6 +177,11 @@ System.err.println();
 		else {
 			doCacheIt=true;
 		}
+
+		if ( log.isDebugEnabled() )
+		{
+			log.debug("Button: "+hex(id)+" prev="+hex(prev)+" value="+hex(value));
+		}
 		listener.button(id,prev,value);
 
 		if ( doCacheIt )
@@ -177,5 +194,15 @@ System.err.println();
 	{
 		return (short) ( ( (hi&0xff)<<8 ) | (lo&0xff) );
 	}
+	
+	public static String hex(short i)
+	{
+		StringBuilder ret=new StringBuilder(4);
+		ret.append(Integer.toHexString(i));
+		while(ret.length()<4) ret.insert(0, '0');
+		return ret.toString();
+	}
+	
+
 }
 

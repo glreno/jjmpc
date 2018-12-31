@@ -1,8 +1,13 @@
 package com.rfacad.jjmpc;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class JoystickMediaPlayerClient
 {
+	private static final Logger log = LogManager.getLogger(JoystickMediaPlayerClient.class);
+
 	private static String PLUCK="/usr/lib/libreoffice/share/gallery/sounds/pluck.wav";
 	private RidiculouslySimpleJoystickDriver jdriver;
 	private RidiculouslySimpleMPDClient mdriver;
@@ -11,6 +16,7 @@ public class JoystickMediaPlayerClient
 	private CmdMpdStatus status;
 
 	public static void main(String [] args) {
+		log.info("Starting up.");
 		JoystickMediaPlayerClient jjmpc = new JoystickMediaPlayerClient();
 		jjmpc.loadCommands();
 		jjmpc.start();
@@ -64,7 +70,7 @@ public class JoystickMediaPlayerClient
 
 
 		// Exit command: Both shifts, select, and start
-		ChordCommand exCmd=new ChordCommand(3,exit);
+		ChordCommand exCmd=new ChordCommand(3,new CmdLog("exiting"),exit);
 		jbm.map(0x0801,0,1,(short)3,exCmd.mkSet(1)); // SELECT - press
 		jbm.map(0x0901,0,1,(short)3,exCmd.mkSet(2)); // START - press
 		// the 'real' select & start commands will also call
@@ -75,14 +81,14 @@ public class JoystickMediaPlayerClient
 		// Select - change play mode (maybe exit)
 		// (Modes are track-once and playlist-once)
 		//
-		jbm.map(0x0801,1,0,(short)3,exCmd.mkCheck(1),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
-		jbm.map(0x0801,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,(short)3,exCmd.mkCheck(1),status,new CmdLog("select_1",true),new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdLog("select_2",true),new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
 
 		//
 		// Start - play/pause (maybe exit)
 		//
-		jbm.map(0x0901,1,0,(short)3,exCmd.mkCheck(2),status,new CmdPlayPause(status)); // START - exit mode
-		jbm.map(0x0901,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayPause(status));
+		jbm.map(0x0901,1,0,(short)3,new CmdLog("start_1",true),exCmd.mkCheck(2),status,new CmdPlayPause(status)); // START - exit mode
+		jbm.map(0x0901,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdLog("start_2",true),new CmdPlayPause(status));
 
 		//
 		// DPad Vert - volume up & down
