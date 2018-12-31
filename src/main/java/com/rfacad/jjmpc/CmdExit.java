@@ -15,7 +15,7 @@ public class CmdExit implements ButtonCommand
 	{
 		if (joystickDriver!=null) joystickDriver.shutdown();
 		if (mpdDriver!=null) mpdDriver.shutdown();
-		return false;
+		return true;
 	}
 }
 

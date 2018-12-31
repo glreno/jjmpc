@@ -11,6 +11,7 @@ public class CmdMpd implements ButtonCommand, RidiculouslySimpleMPDClient.RSMPDL
 	protected String command;
 	private CountDownLatch latch;
 	private boolean retval;
+	protected List<String> response;
 	
 
 	public CmdMpd(RidiculouslySimpleMPDClient md,String cmd)
@@ -19,11 +20,18 @@ public class CmdMpd implements ButtonCommand, RidiculouslySimpleMPDClient.RSMPDL
 		command=cmd;
 		latch=null;
 	}
+	public CmdMpd(CmdMpd another,String cmd)
+	{
+		mpdDriver=another.mpdDriver;
+		command=cmd;
+		latch=null;
+	}
 	public boolean button(BState state)
 	{
 		try {
 			retval=false;
 			mpdDriver.setListener(this);
+			response=null;
 			latch=new CountDownLatch(1);
 			mpdDriver.sendCommand(command);
 			try {
@@ -44,16 +52,26 @@ public class CmdMpd implements ButtonCommand, RidiculouslySimpleMPDClient.RSMPDL
 
 	public void ok(List<String> response)
 	{
-		retval=true;
-		latch.countDown();
+		this.retval=true;
+		this.response=response;
+		this.latch.countDown();
 	}
 
 	public void not_ok(String code,List<String> response)
 	{
 		System.err.println(code);
 		System.err.println(response);
-		retval=false;
-		latch.countDown();
+		this.retval=false;
+		this.response=response;
+		this.latch.countDown();
+	}
+
+	protected List<String> getResponse() {
+		return this.response;
+	}
+
+	protected void setCommand(String s) {
+		this.command=s;
 	}
 }
 

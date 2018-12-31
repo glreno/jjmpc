@@ -8,6 +8,7 @@ public class JoystickMediaPlayerClient
 	private RidiculouslySimpleMPDClient mdriver;
 	private ButtonMapper jbm;
 	private CmdExit exit;
+	private CmdMpdStatus status;
 
 	public static void main(String [] args) {
 		JoystickMediaPlayerClient jjmpc = new JoystickMediaPlayerClient();
@@ -23,6 +24,7 @@ public class JoystickMediaPlayerClient
 		jdriver.setListener(jbm);
 		mdriver=new RidiculouslySimpleMPDClient("localhost",6600);
 		exit=new CmdExit(jdriver,mdriver);
+		status=new CmdMpdStatus(mdriver);
 	}
 
 	public void start() {
@@ -69,10 +71,24 @@ public class JoystickMediaPlayerClient
 		// cmdMaybeExit, which will either exit, or
 		// unset the exState
 
+		//
 		// Select - change play mode (maybe exit)
-		jbm.map(0x0108,1,0,(short)3,exCmd.mkCheck(1)); // SELECT - exit mode
+		// (Modes are track-once and playlist-once)
+		//
+		jbm.map(0x0108,1,0,(short)3,exCmd.mkCheck(1),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0108,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+
+		//
 		// Start - play/pause (maybe exit)
-		jbm.map(0x0109,1,0,(short)3,exCmd.mkCheck(2)); // START - exit mode
+		//
+		jbm.map(0x0109,1,0,(short)3,exCmd.mkCheck(2),status,new CmdPlayPause(status)); // START - exit mode
+		jbm.map(0x0109,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayPause(status));
+
+		//
+		// DPad Vert - volume up & down
+		//
+		jbm.map(0x201,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,10));
+		jbm.map(0x201,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,-10));
 
 		// Buttons from test program
 
@@ -89,7 +105,6 @@ public class JoystickMediaPlayerClient
 		// joystick RIGHT
 		//jbm.map(0x200,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the right"),new SuperSecretCmd(2));
 		// joystick UP
-		//jbm.map(0x201,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("pop up"),new SuperSecretCmd(3));
 		// joystick DOWN
 		//jbm.map(0x201,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("push down"),new SuperSecretCmd(4));
 	}

@@ -11,8 +11,16 @@ public class CmdSh implements ButtonCommand
 
 	public boolean button(BState state)
 	{
+		// Substitute variables into the command string
+		String [] cmd=command;
+		if ( state != null ) {
+			cmd=new String[command.length];
+			for(int i=0;i<command.length;i++) {
+				cmd[i]=state.substitute(command[i]);
+			} 
+		} 
 		try {
-			Process p=Runtime.getRuntime().exec(command);
+			Process p=Runtime.getRuntime().exec(cmd);
 			while(waiter) {
 				// TODO this needs  timeout mechanism
 				try {
@@ -27,5 +35,6 @@ public class CmdSh implements ButtonCommand
 		}
 		return !waiter;
 	}
+
 }
 

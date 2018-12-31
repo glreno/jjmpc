@@ -39,7 +39,7 @@ public class RSMPCTest implements RidiculouslySimpleMPDClient.RSMPDListener
 	public void ok(List<String> response)
 	{
 		System.out.println("OK!");
-		System.out.println(response);
+		for(String s : response ) System.out.println("\t"+s);
 		driver.shutdown();
 	}
 
@@ -47,7 +47,7 @@ public class RSMPCTest implements RidiculouslySimpleMPDClient.RSMPDListener
 	{
 		System.out.println("not ok");
 		System.out.println(code);
-		System.out.println(response);
+		for(String s : response ) System.out.println("\t"+s);
 		driver.shutdown();
 	}
 
