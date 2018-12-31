@@ -3,9 +3,14 @@ import java.io.*;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class RidiculouslySimpleJoystickDriver implements Runnable
 {
+	private static final Logger log = LogManager.getLogger(RidiculouslySimpleJoystickDriver.class);
+	
 	public interface RSJDListener
 	{
 		public void button(short id,short prev,short value);
@@ -55,9 +60,14 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				log.error(e);
 			}
 		}
+	}
+	
+	protected BufferedInputStream openStream() throws IOException
+	{
+		return new BufferedInputStream(new FileInputStream(filename));
 	}
 
 	protected void mainloop()
@@ -67,12 +77,11 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 		byte [] buf=new byte[8];
 		try
 		{
-			in=new BufferedInputStream(new FileInputStream(filename));
+			in=openStream();
 		}
 		catch(IOException e)
 		{
-			System.err.println("Error connecting to joystick "+filename+": "+e.getMessage());
-			e.printStackTrace();
+			log.error("Error connecting to joystick "+filename+": "+e.getMessage(),e);
 			pauseForRetry=true;
 			return;
 		}
@@ -93,13 +102,13 @@ for(int i=0;i<8;i++) {
 }
 System.err.println();
 */
-					short id=mkshort(buf[6],buf[7]);
+					short id=mkshort(buf[7],buf[6]);
 					short value=mkshort(buf[5],buf[4]);
 					report(id,value);
 				}
 				else
 				{
-					System.err.println("Error reading joystick, got "+read+" bytes");
+					log.error("Error reading joystick, got "+read+" bytes");
 					return;
 				}
 			}

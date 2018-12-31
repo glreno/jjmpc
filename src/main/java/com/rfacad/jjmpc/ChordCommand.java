@@ -33,14 +33,17 @@ public class ChordCommand
 		int val;
 		public checkChordState(int n) { val=n;}
 		public boolean button(BState state) {
-			if ( innerState==goalState ) {
+			int t=innerState;
+			innerState&=~val;
+			if ( t==goalState ) {
 				return runGoalCommands(state);
 			}
-			innerState&=~val;
 			return true;
 		}
 	}
 
+	// goalFlags is the OR of all the buttons you will be using,
+	// so if you have mkSet(1) and mkSet(2), goalFlags should be 3.
 	public ChordCommand(int goalFlags,ButtonCommand ... commands) {
 		goalState=goalFlags;
 		goalCommands = Arrays.asList(commands);
@@ -54,9 +57,11 @@ public class ChordCommand
 		return true;
 	}
 
+	// Call this command when the button is pressed ( 0->1 )
 	public ButtonCommand mkSet(int v) {
 		return new setChordState(v);
 	}
+	// Call this command when the button is released ( 1->0 )
 	public ButtonCommand mkCheck(int v) {
 		return new checkChordState(v);
 	}

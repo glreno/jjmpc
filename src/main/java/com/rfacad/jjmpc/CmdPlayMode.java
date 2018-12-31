@@ -1,17 +1,13 @@
 package com.rfacad.jjmpc;
 
-import java.util.*;
-
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdPlayMode extends CmdMpd implements ButtonCommand
 {
 	private CmdMpdStatus status;
-	private int delta;
 	public CmdPlayMode(CmdMpdStatus status)
 	{
 		super(status,"nop");
 		this.status=status;
-		this.delta=delta;
 	}
 	public boolean button(BState state)
 	{

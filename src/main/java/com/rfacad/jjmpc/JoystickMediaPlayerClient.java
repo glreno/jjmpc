@@ -45,28 +45,28 @@ public class JoystickMediaPlayerClient
 		// All command buttons require that a shift button be pressed.
 
 		// left
-		jbm.map(0x104,0,1,ButtonMapper.ANY_SHIFT_STATE, jbm.mkCmdShift(1));
-		jbm.map(0x104,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(1));
+		jbm.map(0x401,0,1,ButtonMapper.ANY_SHIFT_STATE, jbm.mkCmdShift(1));
+		jbm.map(0x401,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(1));
 		// right
-		jbm.map(0x105,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(2));
-		jbm.map(0x105,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(2));
+		jbm.map(0x501,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(2));
+		jbm.map(0x501,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(2));
 
 		// Error sound if any button is pressed without a shift.
 		ButtonCommand fail=new CmdSound(PLUCK);
-		jbm.map(0x0100,1,0,ButtonMapper.NO_SHIFT,fail); // X
+		jbm.map(0x0001,1,0,ButtonMapper.NO_SHIFT,fail); // X
 		jbm.map(0x0101,1,0,ButtonMapper.NO_SHIFT,fail); // A
-		jbm.map(0x0102,1,0,ButtonMapper.NO_SHIFT,fail); // B
-		jbm.map(0x0103,1,0,ButtonMapper.NO_SHIFT,fail); // Y
-		jbm.map(0x0108,1,0,ButtonMapper.NO_SHIFT,fail); // SELECT
-		jbm.map(0x0109,1,0,ButtonMapper.NO_SHIFT,fail); // START
-		jbm.map(0x200,ButtonMapper.ANY,0,ButtonMapper.NO_SHIFT,fail); // H
-		jbm.map(0x201,ButtonMapper.ANY,0,ButtonMapper.NO_SHIFT,fail); // V
+		jbm.map(0x0201,1,0,ButtonMapper.NO_SHIFT,fail); // B
+		jbm.map(0x0301,1,0,ButtonMapper.NO_SHIFT,fail); // Y
+		jbm.map(0x0801,1,0,ButtonMapper.NO_SHIFT,fail); // SELECT
+		jbm.map(0x0901,1,0,ButtonMapper.NO_SHIFT,fail); // START
+		jbm.map(0x0002,ButtonMapper.ANY,0,ButtonMapper.NO_SHIFT,fail); // H
+		jbm.map(0x0102,ButtonMapper.ANY,0,ButtonMapper.NO_SHIFT,fail); // V
 
 
 		// Exit command: Both shifts, select, and start
 		ChordCommand exCmd=new ChordCommand(3,exit);
-		jbm.map(0x0108,0,1,(short)3,exCmd.mkSet(1)); // SELECT - press
-		jbm.map(0x0109,0,1,(short)3,exCmd.mkSet(2)); // START - press
+		jbm.map(0x0801,0,1,(short)3,exCmd.mkSet(1)); // SELECT - press
+		jbm.map(0x0901,0,1,(short)3,exCmd.mkSet(2)); // START - press
 		// the 'real' select & start commands will also call
 		// cmdMaybeExit, which will either exit, or
 		// unset the exState
@@ -75,38 +75,38 @@ public class JoystickMediaPlayerClient
 		// Select - change play mode (maybe exit)
 		// (Modes are track-once and playlist-once)
 		//
-		jbm.map(0x0108,1,0,(short)3,exCmd.mkCheck(1),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
-		jbm.map(0x0108,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,(short)3,exCmd.mkCheck(1),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
 
 		//
 		// Start - play/pause (maybe exit)
 		//
-		jbm.map(0x0109,1,0,(short)3,exCmd.mkCheck(2),status,new CmdPlayPause(status)); // START - exit mode
-		jbm.map(0x0109,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayPause(status));
+		jbm.map(0x0901,1,0,(short)3,exCmd.mkCheck(2),status,new CmdPlayPause(status)); // START - exit mode
+		jbm.map(0x0901,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdPlayPause(status));
 
 		//
 		// DPad Vert - volume up & down
 		//
-		jbm.map(0x201,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,10));
-		jbm.map(0x201,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,-10));
+		jbm.map(0x0102,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,10));
+		jbm.map(0x0102,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,-10));
 
 		// Buttons from test program
 
 		// Map most of the buttons
 
-		jbm.map(0x0100,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("X",true));
-		jbm.map(0x0100,1,0,ButtonMapper.NO_SHIFT,new CmdSound(PLUCK));
+		jbm.map(0x0001,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("X",true));
+		jbm.map(0x0001,1,0,ButtonMapper.NO_SHIFT,new CmdSound(PLUCK));
 		jbm.map(0x0101,1,0,ButtonMapper.ANY_SHIFT_STATE,new CmdLog("A",true));
-		jbm.map(0x0102,1,0,(short)3,new CmdLog("B",true));
-		jbm.map(0x0103,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("Y",true));
+		jbm.map(0x0201,1,0,(short)3,new CmdLog("B",true));
+		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("Y",true));
 
 		// joystick LEFT
-		//jbm.map(0x200,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the left"),new SuperSecretCmd(1));
+		//jbm.map(0x0002,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the left"),new SuperSecretCmd(1));
 		// joystick RIGHT
-		//jbm.map(0x200,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the right"),new SuperSecretCmd(2));
+		//jbm.map(0x0002,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the right"),new SuperSecretCmd(2));
 		// joystick UP
 		// joystick DOWN
-		//jbm.map(0x201,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("push down"),new SuperSecretCmd(4));
+		//jbm.map(0x0102,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("push down"),new SuperSecretCmd(4));
 	}
 
 }

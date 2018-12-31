@@ -17,6 +17,13 @@ public class BState
 		this.value=value;
 		this.map=new ConcurrentHashMap<>();
 	}
+	
+	public BState(BState o) {
+		this.id=o.id;
+		this.prev=o.prev;
+		this.value=o.value;
+		this.map=new ConcurrentHashMap<>(o.map);
+	}
 
 	public short getButtonId() { return id;}
 	public short getPrevValue() { return prev;}
