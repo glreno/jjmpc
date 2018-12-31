@@ -9,30 +9,6 @@ public class JoystickMediaPlayerClient
 	private ButtonMapper jbm;
 	private CmdExit exit;
 
-	// Support for two-button-chord exit command
-	private int exitstate=0;
-	private class setExState implements ButtonCommand {
-		int val;
-		public setExState(int n) { val=n;}
-		public boolean button(BState state) {
-			exitstate|=val;
-			return true;
-		}
-	}
-	private class maybeExit implements ButtonCommand {
-		int val;
-		public maybeExit(int n) { val=n;}
-		public boolean button(BState state) {
-			if ( exitstate==3 ) {
-				// shut down!
-				return exit.button(state);
-			}
-			exitstate&=~val;
-			return true;
-		}
-	}
-
-
 	public static void main(String [] args) {
 		JoystickMediaPlayerClient jjmpc = new JoystickMediaPlayerClient();
 		jjmpc.loadCommands();
@@ -86,16 +62,17 @@ public class JoystickMediaPlayerClient
 
 
 		// Exit command: Both shifts, select, and start
-		jbm.map(0x0108,0,1,(short)3,new setExState(1)); // SELECT - press
-		jbm.map(0x0109,0,1,(short)3,new setExState(2)); // START - press
+		ChordCommand exCmd=new ChordCommand(3,exit);
+		jbm.map(0x0108,0,1,(short)3,exCmd.mkSet(1)); // SELECT - press
+		jbm.map(0x0109,0,1,(short)3,exCmd.mkSet(2)); // START - press
 		// the 'real' select & start commands will also call
 		// cmdMaybeExit, which will either exit, or
 		// unset the exState
 
 		// Select - change play mode (maybe exit)
-		jbm.map(0x0108,1,0,(short)3,new maybeExit(1)); // SELECT - exit mode
+		jbm.map(0x0108,1,0,(short)3,exCmd.mkCheck(1)); // SELECT - exit mode
 		// Start - play/pause (maybe exit)
-		jbm.map(0x0109,1,0,(short)3,new maybeExit(2)); // START - exit mode
+		jbm.map(0x0109,1,0,(short)3,exCmd.mkCheck(2)); // START - exit mode
 
 		// Buttons from test program
 
