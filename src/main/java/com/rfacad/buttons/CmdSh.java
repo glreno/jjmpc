@@ -1,21 +1,26 @@
 package com.rfacad.buttons;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.rfacad.buttons.interfaces.BState;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdSh implements ButtonCommand
 {
 	private static final Logger log = LogManager.getLogger(CmdSh.class);
 
+	public static List<String[]> globalTestLog=null; 
 	private String [] command;
 	private String [] lastRunJob;
 	private boolean waiter;
-	private boolean testmode=false;
+	private boolean testmode;
 	
 	public CmdSh(boolean wait,String ... cmd) {
+		testmode=(globalTestLog!=null);
 		command=cmd;
 		waiter=wait;
 	}
@@ -39,6 +44,11 @@ public class CmdSh implements ButtonCommand
 		
 		// log for future reference
 		lastRunJob=cmd;
+		if ( globalTestLog != null )
+		{
+			globalTestLog.add(cmd);
+		}
+		
 		if ( log.isDebugEnabled() )
 		{
 			StringBuilder b=new StringBuilder();

@@ -1,4 +1,4 @@
-package com.rfacad.joystick;
+package com.rfacad.jjmpc;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,21 +8,32 @@ import java.io.FileOutputStream;
 
 import org.junit.Test;
 
+import com.rfacad.buttons.CmdSh;
+import com.rfacad.jjmpc.JoystickMediaPlayerClient;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class TestRSJDTest {
+public class TestJjmpcStartup {
 	
 	@Test
 	public void shouldShutDownTestProgram() throws IOException
 	{
+		List<String[]> testlog=new ArrayList<>();
+		CmdSh.globalTestLog=testlog;
 		String fn="/tmp/stop_joystick";
 		File f=new File(fn);
-		// Create a file containing button 0x109 being pressed.
+		// The shutdown command is L and R shifts, select and start.
 		FileOutputStream out=new FileOutputStream(f);
 		List<short[]> calls = new ArrayList<>();
-		calls.add( new short[] {(short)0x901,(short)0} );
-		calls.add( new short[] {(short)0x901,(short)1} );
-		calls.add( new short[] {(short)0x901,(short)0} );
-		calls.add( new short[] {(short)0x901,(short)1} );
+		calls.add( new short[] {(short)0x401,(short)1} ); // L
+		calls.add( new short[] {(short)0x501,(short)1} ); // R
+		calls.add( new short[] {(short)0x801,(short)1} ); // Select
+		calls.add( new short[] {(short)0x901,(short)1} ); // Start
+
+		calls.add( new short[] {(short)0x901,(short)0} ); // Start
+		calls.add( new short[] {(short)0x801,(short)0} ); // Select
+		calls.add( new short[] {(short)0x501,(short)0} ); // R
+		calls.add( new short[] {(short)0x401,(short)0} ); // L
+
 		byte [] content=new byte[calls.size()*8];
 		for(int i=0;i<calls.size();i++)
 		{
@@ -44,9 +55,9 @@ public class TestRSJDTest {
 		out.write(content);
 		out.close();
 		
-		RSJDTest.main(new String[] {fn});
+		JoystickMediaPlayerClient.main(new String[] {"-j",fn,"-h","localhost","-p","6600"});
 		
-		try { Thread.sleep(1000);}catch(InterruptedException e) {}
+		try { Thread.sleep(1000);} catch (InterruptedException e) {}
 		
 		f.delete();
 	}

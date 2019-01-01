@@ -4,12 +4,14 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.rfacad.buttons.interfaces.BState;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class TestBState
 {
 	@Test
 	public void shouldStoreButtonState() {
-		BState state=new BState((short)1, (short)2, (short)3);
+		ButtonState state=new ButtonState((short)1, (short)2, (short)3);
 		assertEquals((short)1,state.getButtonId());
 		assertEquals((short)2,state.getPrevValue());
 		assertEquals((short)3,state.getNewValue());
@@ -17,7 +19,7 @@ public class TestBState
 	
 	@Test
 	public void shouldUnescapePercents() {
-		BState state=new BState((short)1, (short)2, (short)3);
+		BState state=new ButtonState((short)1, (short)2, (short)3);
 		
 		String test0="%";
 		String s0 = state.substitute(test0);
@@ -39,7 +41,7 @@ public class TestBState
 
 	@Test
 	public void shouldHandleUnsetValue() {
-		BState state=new BState((short)1, (short)2, (short)3);
+		BState state=new ButtonState((short)1, (short)2, (short)3);
 		String test="There is no %foo% value here";
 		String s = state.substitute(test);
 		assertEquals("There is no  value here",s);
@@ -47,7 +49,7 @@ public class TestBState
 
 	@Test
 	public void shouldSubstituteValues() {
-		BState state=new BState((short)1, (short)2, (short)3);
+		BState state=new ButtonState((short)1, (short)2, (short)3);
 		String test1="foo is %foo%, bar is %bar%.";
 		state.set("foo", "xyzzy");
 		state.set("bar", "quux");

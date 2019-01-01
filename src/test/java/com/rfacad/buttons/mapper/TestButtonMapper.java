@@ -6,8 +6,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
+import com.rfacad.buttons.ButtonState;
 import com.rfacad.buttons.MockCmd;
 import com.rfacad.buttons.mapper.ButtonMapper;
 
@@ -33,7 +34,7 @@ public class TestButtonMapper
 		bm.button(S0,S1,S0);
 		List<BState> calls1 = c1.getCalls();
 		assertEquals(1,calls1.size());
-		BState state1=calls1.get(0);
+		ButtonState state1=(ButtonState)calls1.get(0);
 		assertEquals(S0,state1.getButtonId());
 		assertEquals(S1,state1.getPrevValue());
 		assertEquals(S0,state1.getNewValue());

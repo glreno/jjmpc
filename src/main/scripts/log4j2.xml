@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- logv4j2 config file for jjmpc; just put this in the dir with jjmpc.sh -->
+<Configuration status="INFO">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%t] %l - %msg%n"/>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="ERROR">
+		  <AppenderRef ref="Console"/>
+		</Root>
+		<Logger name="com.rfacad" level="INFO" additivity="false">
+		  <AppenderRef ref="Console"/>
+		</Logger>
+		<Logger name="com.rfacad.buttons.ButtonCommand" level="DEBUG" additivity="false">
+		  <AppenderRef ref="Console"/>
+		</Logger>
+	</Loggers>
+</Configuration>
+

@@ -2,25 +2,31 @@ package com.rfacad.jjmpc;
 
 import java.util.*;
 import java.util.concurrent.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.mpd.interfaces.RSMPDListener;
-import com.rfacad.mpd.RidiculouslySimpleMPDClient;
+import com.rfacad.mpd.interfaces.RidiculouslySimpleMPDClientI;
 
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdMpd implements ButtonCommand, RSMPDListener
 {
-	protected RidiculouslySimpleMPDClient mpdDriver;
+	private static final Logger log = LogManager.getLogger(CmdMpd.class);
+	
+	protected RidiculouslySimpleMPDClientI mpdDriver;
 	protected String command;
 	private CountDownLatch latch;
 	private boolean retval;
 	protected List<String> response;
 	
 
-	public CmdMpd(RidiculouslySimpleMPDClient md,String cmd)
+	public CmdMpd(RidiculouslySimpleMPDClientI md,String cmd)
 	{
 		mpdDriver=md;
 		command=cmd;
@@ -36,22 +42,19 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 	{
 		try {
 			retval=false;
-			mpdDriver.setListener(this);
 			response=null;
 			latch=new CountDownLatch(1);
-			mpdDriver.sendCommand(command);
+			mpdDriver.sendCommand(command,this);
 			try {
 				latch.await();
 			}
 			catch (InterruptedException e) {
 				// retval is false
 			}
-			mpdDriver.setListener(null);
 			return retval;
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-			mpdDriver.closeSocket();
+		catch (IOException|RejectedExecutionException e) {
+			log.error("Exception contacting MPD",e);
 			return false;
 		}
 	}
@@ -65,8 +68,8 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 
 	public void not_ok(String code,List<String> response)
 	{
-		System.err.println(code);
-		System.err.println(response);
+		log.warn(code);
+		log.warn(response);
 		this.retval=false;
 		this.response=response;
 		this.latch.countDown();
@@ -79,5 +82,6 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 	protected void setCommand(String s) {
 		this.command=s;
 	}
+	
 }
 

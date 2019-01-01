@@ -1,10 +1,11 @@
-package com.rfacad.jjmpc;
+package com.rfacad.audioCommands;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
+import com.rfacad.buttons.ButtonState;
 import com.rfacad.buttons.CmdSh;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
@@ -14,7 +15,7 @@ public class TestCmdSound
 	@Test
 	public void shouldPlaySound() {
 		short s0=(short)0;
-		BState state=new BState(s0, s0, s0);
+		BState state=new ButtonState(s0, s0, s0);
 		state.set("foo", "bar");
 
 		CmdSh cmd1 = new CmdSound("%foo%");
@@ -33,7 +34,7 @@ public class TestCmdSound
 	@Test
 	public void shouldSayPhrase() {
 		short s0=(short)0;
-		BState state=new BState(s0, s0, s0);
+		BState state=new ButtonState(s0, s0, s0);
 		state.set("foo", "bar");
 
 		CmdSh cmd1 = new CmdSay("%foo%");

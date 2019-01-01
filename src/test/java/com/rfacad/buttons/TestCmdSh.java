@@ -6,6 +6,8 @@ import java.io.File;
 
 import org.junit.Test;
 
+import com.rfacad.buttons.interfaces.BState;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class TestCmdSh
 {
@@ -37,7 +39,7 @@ public class TestCmdSh
 	@Test
 	public void shouldSubstituteVars() {
 		short s0=(short)0;
-		BState state=new BState(s0, s0, s0);
+		BState state=new ButtonState(s0, s0, s0);
 		state.set("foo", "bar");
 
 		CmdSh cmd1 = new CmdSh(true,"/bin/false","%foo%");

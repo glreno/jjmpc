@@ -1,189 +1,102 @@
 package com.rfacad.mpd;
 
 import java.io.*;
-import java.util.*;
-import java.net.*;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.mpd.SyncMPDCall.MPDCallDoneListener;
 import com.rfacad.mpd.interfaces.RSMPDListener;
+import com.rfacad.mpd.interfaces.RidiculouslySimpleMPDClientI;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class RidiculouslySimpleMPDClient implements Runnable
+public class RidiculouslySimpleMPDClient implements MPDCallDoneListener, RidiculouslySimpleMPDClientI
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleMPDClient.class);
 
-	private boolean keepgoing=true;
-	private boolean pauseForRetry=false;
-	private RSMPDListener listener=null;
-	private Socket socket=null;
-	private PrintWriter out=null;
-	private BufferedReader in=null;
 	private String address;
 	private int port;
+	private ExecutorService executor;
+	private Queue<SyncMPDCall> jobs;
+	private boolean shuttingdown;
 
 	public RidiculouslySimpleMPDClient(String address, int port)
 	{
 		this.address=address;
 		this.port=port;
+		this.executor=Executors.newCachedThreadPool();
+		this.jobs=new ConcurrentLinkedQueue<>();
+		this.shuttingdown=false;
+	}
+	
+	public void setExecutor(ExecutorService executor)
+	{
+		this.executor=executor;
 	}
 
-	public void setListener(RSMPDListener listener)
-	{
-		this.listener=listener;
+	public int getPort() {
+		return port;
 	}
 
-	public void closeSocket()
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	@Override
+	public void sendCommand(String command, RSMPDListener listener)
 	{
-		if ( socket != null  && ! socket.isClosed() )
+		SyncMPDCall r=new SyncMPDCall(address,port,command,listener,this);
+		jobs.add(r);
+		if ( shuttingdown )
 		{
-			try {
-				socket.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		socket=null;
-	}
-
-	public void openSocket() throws IOException
-	{
-		socket=new Socket(address,port);
-		out=new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-		in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		//System.out.println("Socket opened to "+address+" port "+port);
-		String s=in.readLine();
-		//System.out.println(s);
-	}
-
-
-	public void shutdown()
-	{
-		closeSocket();
-		this.keepgoing=false;
-	}
-
-	public void run()
-	{
-		log.info("MPD Client thread starting.");
-		while(keepgoing)
-		{
-			if ( pauseForRetry )
-			{
-				try
-				{
-					Thread.sleep(1000);
-				}
-				catch (InterruptedException e)
-				{
-					;
-				}
-			}
-			try
-			{
-				mainloop();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		log.info("MPD Client thread ending.");
-	}
-
-	public void sendCommand(String command) throws IOException
-	{
-		if ( out == null )
-		{
-			closeSocket();
-		}
-		if ( socket == null )
-		{
-			openSocket();
-		}
-		if ( out == null )
-		{
-			throw new IOException("Unable to open socket");
-		}
-		//System.out.println("Sending:"+command);
-		out.println(command);
-		out.flush();
-	}
-
-	protected void mainloop()
-	{
-		// Listen for text on the socket
-		// Read everything up to OK or ACK
-		// Send to the listener
-		if ( in == null )
-		{
-			pauseForRetry=true;
-			//System.out.println("wee paws");
+			log.debug("Shutting down, not executing command {}",command);
 		}
 		else
 		{
-			List<String> response=new ArrayList<String>();
-			String s;
 			try
 			{
-				//System.out.println("Waiting...");
-				while ( (s = in.readLine()) != null )
-				{
-					//System.out.println(s);
-					if ( s.startsWith("OK")) {
-						sendok(response);
-						response=new ArrayList<String>();
-					}
-					else if ( s.startsWith("ACK")) {
-						senderr(s,response);
-						response=new ArrayList<String>();
-					}
-					else
-					{
-						response.add(s);
-					}
-				}
+				executor.execute(r);
 			}
-			catch (SocketException e) {
-				if ("Socket closed".equals(e.getMessage())) {
-					closeSocket();
-					//System.out.println("Socket closed");
-				}
-				else {
-				closeSocket();
-				e.printStackTrace();
-				response.add(e.getMessage());
-				senderr("Exception thrown",response);
-				}
+			catch (RejectedExecutionException e)
+			{
+				// this can happen, most likely if
+				// a command got queued during shutdown
 			}
-			catch (IOException e) {
-				e.printStackTrace();
-				response.add(e.getMessage());
-				senderr("Exception thrown",response);
-			}
-			//System.out.println("Done waiting.");
 		}
 	}
-
-	private void sendok(List<String> response)
+	
+	public void shutdown()
 	{
-		try{
-			listener.ok(response);
+		shuttingdown=true;
+		int nj=jobs.size();
+		if ( nj > 0 )
+		{
+			log.warn("Shutting down executor, there are {} jobs",jobs.size());
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		else
+		{
+			log.debug("Shutting down executor");
 		}
+		// stop processing new jobs
+		executor.shutdown();
+		// Warn the jobs
+		for(SyncMPDCall r:jobs)
+		{
+			r.shutdown();
+		}
+		// interrupt any jobs that are still running
+		log.debug("Final force of executor shutdown");
+		executor.shutdownNow();
+		log.info("executor shut down");
 	}
 
-	private void senderr(String code,List<String> response)
-	{
-		try{
-			listener.not_ok(code,response);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void callDone(SyncMPDCall c) {
+		jobs.remove(c);
 	}
 }
