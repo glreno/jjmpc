@@ -16,8 +16,8 @@ package com.rfacad;
  * limitations under the License.
  */
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class License {
- 	public static String LICENSE = ""
+public interface License {
+ 	public static final String LICENSE = ""
 +" * jjmpc\r\n"
 +" * Copyright 2018 Gerald Reno, Jr\r\n"
 +" * \r\n"

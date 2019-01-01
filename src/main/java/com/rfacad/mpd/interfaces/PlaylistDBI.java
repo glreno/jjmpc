@@ -58,8 +58,20 @@ public interface PlaylistDBI {
 	String getNextPlaylist(BState bs);
 
 	/**
+	 * Note: This returns a playlist ID, NOT a playlist folder ID!
+	 * @return ID of the first playlist in the next playlist folder AFTER the most recently loaded playlist; if nothing loaded, then the ID of the first playlist.
+	 */
+	String getNextPlaylistFolderFirstPlaylist(BState bs);
+
+	/**
 	 * @return ID of the playlist BEFORE the most recently loaded playlist; if nothing loaded, then return null.
 	 */
 	String getPrevPlaylist(BState bs);
+
+	/**
+	 * Note: This returns a playlist ID, NOT a playlist folder ID!
+	 * @return ID of the first playlist in the playlist folder BEFORE the most recently loaded playlist; if nothing loaded, then return null.
+	 */
+	String getPrevPlaylistFolderFirstPlaylist(BState bs);
 
 }

@@ -28,7 +28,7 @@ public class LoadPlaylistTest {
 	public static final String CMD_LISTM3U = "listplaylistinfo \""+PLID1+"\"";
 	public static final String CMD_UPDATE = "update";
 	public static final String CMD_CLEAR = "clear";
-	public static final String CMD_CLEARM3U = "clear \""+PLID1+"\"";
+	public static final String CMD_CLEARM3U = "playlistclear \""+PLID1+"\"";
 	public static final String CMD_LOAD = "load \""+PLID1+"\"";
 	public static final String FNAME1="Holy Grail 01.mp3";
 	public static final String FNAME2="Holy Grail 02.mp3";

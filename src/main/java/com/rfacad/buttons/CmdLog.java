@@ -45,5 +45,7 @@ public class CmdLog implements ButtonCommand
 		}
 		return true;
 	}
+	
+	public String getDescription() { return "CmdLog "+level+" "+msg;}
 }
 

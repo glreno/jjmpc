@@ -145,6 +145,7 @@ public class PlaylistTest {
 
 		List<String> response1=new ArrayList<>();
 		response1.add(F+FNAME2); response1.add(S); response1.add(T);
+		response1.add(F+".DS_Store"); response1.add(S); response1.add(T);
 		response1.add(F+FNAME1); response1.add(S); response1.add(T);
 		mpdc.expectOkRequest(CMD, response1);
 

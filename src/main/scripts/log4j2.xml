@@ -5,16 +5,29 @@
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%t] %l - %msg%n"/>
 		</Console>
+		<RollingFile name="RollingFile" fileName="logs/jjmpc.log"
+			filePattern="logs/jjmpc-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%t] %l - %msg%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="2 MB"/>
+		      </Policies>
+		</RollingFile>
 	</Appenders>
 	<Loggers>
 		<Root level="ERROR">
-		  <AppenderRef ref="Console"/>
+		  <AppenderRef ref="RollingFile"/>
 		</Root>
 		<Logger name="com.rfacad" level="INFO" additivity="false">
-		  <AppenderRef ref="Console"/>
+		  <AppenderRef ref="RollingFile"/>
 		</Logger>
-		<Logger name="com.rfacad.buttons.ButtonCommand" level="DEBUG" additivity="false">
-		  <AppenderRef ref="Console"/>
+		<Logger name="com.rfacad.jjmpc" level="INFO" additivity="false">
+		  <AppenderRef ref="RollingFile"/>
+		</Logger>
+
+		<Logger name="com.rfacad.mpd.SyncMPDCall" level="INFO" additivity="false">
+		  <!-- Set to DEBUG to log calls made to the mpd daemon -->
+		  <AppenderRef ref="RollingFile"/>
 		</Logger>
 	</Loggers>
 </Configuration>
