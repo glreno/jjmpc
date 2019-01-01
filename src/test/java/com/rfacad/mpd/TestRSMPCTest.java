@@ -76,4 +76,13 @@ public class TestRSMPCTest extends AbstractMPDClientTest {
 		sent.await(10,TimeUnit.SECONDS);
 	}
 
+	@Test
+	public void coverUsage()
+	{
+		String [] args = new String [] {
+				"--help"
+			};
+		RSMPCTest.main(args);
+	}
+	
 }
