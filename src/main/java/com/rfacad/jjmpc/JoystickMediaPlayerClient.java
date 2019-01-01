@@ -4,7 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.rfacad.buttons.ButtonCommand;
-import com.rfacad.buttons.ButtonMapper;
+import com.rfacad.buttons.ChordCommand;
+import com.rfacad.buttons.CmdLog;
+import com.rfacad.buttons.mapper.ButtonMapper;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
 import com.rfacad.mpd.RidiculouslySimpleMPDClient;
 

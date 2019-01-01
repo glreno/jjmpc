@@ -1,4 +1,4 @@
-package com.rfacad.jjmpc;
+package com.rfacad.buttons;
 
 import java.io.IOException;
 

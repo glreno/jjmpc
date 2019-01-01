@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.rfacad.buttons.mapper.ButtonMapper;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class TestButtonMapper
 {
@@ -32,7 +34,7 @@ public class TestButtonMapper
 		assertEquals(S0,state1.getButtonId());
 		assertEquals(S1,state1.getPrevValue());
 		assertEquals(S0,state1.getNewValue());
-		Byte ss1=(Byte) state1.get(ButtonMapper.SHIFT);
+		Byte ss1=(Byte) state1.get(BState.SHIFT);
 		assertEquals((byte)0,ss1.byteValue());
 	}
 

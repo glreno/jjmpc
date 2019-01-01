@@ -1,9 +1,10 @@
-package com.rfacad.buttons;
+package com.rfacad.buttons.mapper;
 
 import java.util.*;
 
+import com.rfacad.buttons.BState;
+import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.joystick.interfaces.RSJDListener;
-import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class ButtonMapper implements RSJDListener
@@ -15,8 +16,6 @@ public class ButtonMapper implements RSJDListener
 	public static short NO_SHIFT=0; // obvious, really
 	public static short AT_LEAST_ONE_SHIFT=0x100;
 	public static short ANY_SHIFT_STATE=0x200;
-
-	public static String SHIFT="SHIFTS";
 
 	// What to do when there is an error
 	private ButtonCommand errHandler;
@@ -44,7 +43,7 @@ public class ButtonMapper implements RSJDListener
 		CmdShift(byte f) { flag=f;}
 		public boolean button(BState state) {
 			shifts |= flag;
-			state.set(SHIFT,shifts);
+			state.set(BState.SHIFT,shifts);
 			return true;
 		}
 	}
@@ -53,7 +52,7 @@ public class ButtonMapper implements RSJDListener
 		CmdUnshift(byte f) { flag=f;}
 		public boolean button(BState state) {
 			shifts &= ~flag;
-			state.set(SHIFT,shifts);
+			state.set(BState.SHIFT,shifts);
 			return true;
 		}
 	}
@@ -105,7 +104,7 @@ public class ButtonMapper implements RSJDListener
 		if ( commands != null )
 		{
 			BState state=new BState(id,prev,value);
-			state.set(SHIFT,shifts);
+			state.set(BState.SHIFT,shifts);
 			execute(commands,state);
 		}
 	}

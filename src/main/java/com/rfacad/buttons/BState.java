@@ -10,6 +10,7 @@ public class BState
 	private short prev;
 	private short value;
 	private Map<String,Object> map;
+	public static String SHIFT="SHIFTS";
 
 	public BState(short id,short prev,short value) {
 		this.id=id;
