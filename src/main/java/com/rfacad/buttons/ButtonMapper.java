@@ -1,10 +1,12 @@
 package com.rfacad.buttons;
 
 import java.util.*;
+
+import com.rfacad.joystick.interfaces.RSJDListener;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class ButtonMapper implements RidiculouslySimpleJoystickDriver.RSJDListener
+public class ButtonMapper implements RSJDListener
 {
 	public static Integer NEGATIVE=0x10000;
 	public static Integer POSITIVE=0x20000;
@@ -26,7 +28,7 @@ public class ButtonMapper implements RidiculouslySimpleJoystickDriver.RSJDListen
 	// The value maps are sorted because they are tested in order:
 	// real values, any-neg, any-pos, any
 
-	Map<Short,SortedMap<Integer,SortedMap<Integer,SortedMap<Short,List<ButtonCommand>>>>> mapping;
+	private Map<Short,SortedMap<Integer,SortedMap<Integer,SortedMap<Short,List<ButtonCommand>>>>> mapping;
 
 
 	// The shift commands are builtin, they need access here.

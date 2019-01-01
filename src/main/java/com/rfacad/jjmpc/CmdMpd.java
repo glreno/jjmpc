@@ -6,11 +6,12 @@ import java.io.IOException;
 
 import com.rfacad.buttons.BState;
 import com.rfacad.buttons.ButtonCommand;
+import com.rfacad.mpd.interfaces.RSMPDListener;
 import com.rfacad.mpd.RidiculouslySimpleMPDClient;
 
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class CmdMpd implements ButtonCommand, RidiculouslySimpleMPDClient.RSMPDListener
+public class CmdMpd implements ButtonCommand, RSMPDListener
 {
 	protected RidiculouslySimpleMPDClient mpdDriver;
 	protected String command;

@@ -1,7 +1,9 @@
 package com.rfacad.joystick;
 
+import com.rfacad.joystick.interfaces.RSJDListener;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class RSJDTest implements RidiculouslySimpleJoystickDriver.RSJDListener
+public class RSJDTest implements RSJDListener
 {
 	private RidiculouslySimpleJoystickDriver driver;
 	public void button(short id,short prev,short value)

@@ -6,21 +6,12 @@ import java.net.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.mpd.interfaces.RSMPDListener;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class RidiculouslySimpleMPDClient implements Runnable
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleMPDClient.class);
-
-	public interface RSMPDListener
-	{
-		/** @param responses Response text, up to but not including 'OK'. Newlines removed. May be empty, but not null */
-		public void ok(List<String> responses);
-		/** Called on error.
-		 * @param completioncode The 'ACK' text
-		 * @param responses anything else
-		 */
-		public void not_ok(String completioncode,List<String> responses);
-	}
 
 	private boolean keepgoing=true;
 	private boolean pauseForRetry=false;

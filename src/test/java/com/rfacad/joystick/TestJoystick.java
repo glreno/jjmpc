@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +13,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
+import com.rfacad.joystick.interfaces.RSJDListener;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class TestJoystick
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleJoystickDriver.class);
 
-	class TestJDListener implements RidiculouslySimpleJoystickDriver.RSJDListener
+	class TestJDListener implements RSJDListener
 	{
 		public List<short[]> calls=new ArrayList<>();
 		public CountDownLatch latch;
