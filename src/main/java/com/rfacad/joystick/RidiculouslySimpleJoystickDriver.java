@@ -52,8 +52,11 @@ public class RidiculouslySimpleJoystickDriver
 		{
 			;
 		}
-		thr.interrupt();
+		Thread t=thr;
 		thr=null;
+		if ( t!=null ) {
+			t.interrupt();
+		}
 	}
 	
 	public void spawn()

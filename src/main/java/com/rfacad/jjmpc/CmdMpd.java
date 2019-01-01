@@ -82,5 +82,6 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 	protected void setCommand(String s) {
 		this.command=s;
 	}
+	
 }
 

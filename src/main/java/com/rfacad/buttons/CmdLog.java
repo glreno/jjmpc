@@ -1,5 +1,6 @@
 package com.rfacad.buttons;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,9 +11,17 @@ public class CmdLog implements ButtonCommand
 
 	private String msg;
 	private boolean logstate;
-	public CmdLog() { msg=null;logstate=true;}
-	public CmdLog(String s) { msg=s;logstate=false;}
-	public CmdLog(String s,boolean state) { msg=s;logstate=state;}
+	private Level level;
+	
+	public static CmdLog info(String s) { return new CmdLog(Level.INFO,s,false);}
+	public static CmdLog debug(String s) { return new CmdLog(Level.DEBUG,s,true);}
+	
+	public CmdLog(Level lvl,String s,boolean state) {
+		level=lvl;
+		msg=s;
+		logstate=state;
+	}
+	
 	public boolean button(BState state)
 	{
 		if ( state == null && msg == null )
@@ -21,14 +30,14 @@ public class CmdLog implements ButtonCommand
 		}
 		if ( logstate && state != null )
 		{
-			log.info("ID:"+Integer.toHexString(state.getButtonId())
+			log.log(level,"ID:"+Integer.toHexString(state.getButtonId())
 			+" Prev:"+state.getPrevValue()
 			+" Value:"+state.getNewValue()
 			+" Shifts:"+state.get(BState.SHIFT));
 		}
 		if ( msg != null )
 		{
-			log.info(msg);
+			log.log(level,msg);
 		}
 		return true;
 	}

@@ -52,7 +52,7 @@ public class RSMPCTest implements RSMPDListener
 			System.out.println("Sending: "+buf.toString());
 			test.driver.sendCommand(buf.toString(),test);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			//test.driver.closeSocket();
 			test.driver.shutdown();

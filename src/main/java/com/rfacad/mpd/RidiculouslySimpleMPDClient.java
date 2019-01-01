@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,7 @@ public class RidiculouslySimpleMPDClient implements MPDCallDoneListener, Ridicul
 	private int port;
 	private ExecutorService executor;
 	private Queue<SyncMPDCall> jobs;
+	private boolean shuttingdown;
 
 	public RidiculouslySimpleMPDClient(String address, int port)
 	{
@@ -29,6 +31,7 @@ public class RidiculouslySimpleMPDClient implements MPDCallDoneListener, Ridicul
 		this.port=port;
 		this.executor=Executors.newCachedThreadPool();
 		this.jobs=new ConcurrentLinkedQueue<>();
+		this.shuttingdown=false;
 	}
 	
 	public void setExecutor(ExecutorService executor)
@@ -45,15 +48,31 @@ public class RidiculouslySimpleMPDClient implements MPDCallDoneListener, Ridicul
 	}
 
 	@Override
-	public void sendCommand(String command, RSMPDListener listener) throws IOException
+	public void sendCommand(String command, RSMPDListener listener)
 	{
 		SyncMPDCall r=new SyncMPDCall(address,port,command,listener,this);
 		jobs.add(r);
-		executor.execute(r);
+		if ( shuttingdown )
+		{
+			log.debug("Shutting down, not executing command {}",command);
+		}
+		else
+		{
+			try
+			{
+				executor.execute(r);
+			}
+			catch (RejectedExecutionException e)
+			{
+				// this can happen, most likely if
+				// a command got queued during shutdown
+			}
+		}
 	}
 	
 	public void shutdown()
 	{
+		shuttingdown=true;
 		int nj=jobs.size();
 		if ( nj > 0 )
 		{
@@ -71,6 +90,7 @@ public class RidiculouslySimpleMPDClient implements MPDCallDoneListener, Ridicul
 			r.shutdown();
 		}
 		// interrupt any jobs that are still running
+		log.debug("Final force of executor shutdown");
 		executor.shutdownNow();
 		log.info("executor shut down");
 	}

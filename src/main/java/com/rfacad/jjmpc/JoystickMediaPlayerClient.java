@@ -8,6 +8,7 @@ import com.rfacad.audioCommands.CmdSound;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.ChordCommand;
 import com.rfacad.buttons.CmdLog;
+import com.rfacad.buttons.CmdPause;
 import com.rfacad.buttons.mapper.ButtonMapper;
 import com.rfacad.joystick.CmdExitJoystickDriver;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
@@ -84,8 +85,10 @@ public class JoystickMediaPlayerClient
 	}
 
 	protected void startupScript() {
+		log.debug("Running startup script");
 		new CmdMpd(mdriver,"setvol 70").button(null);
 		new CmdSay("Greetings").button(null);
+		log.debug("startup script complete");
 	}
 
 	protected void loadCommands() {
@@ -96,11 +99,11 @@ public class JoystickMediaPlayerClient
 		// All command buttons require that a shift button be pressed.
 
 		// left
-		jbm.map(0x401,0,1,ButtonMapper.ANY_SHIFT_STATE, jbm.mkCmdShift(1));
-		jbm.map(0x401,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(1));
+		jbm.map(0x401,0,1,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("401 left shift down"), jbm.mkCmdShift(1));
+		jbm.map(0x401,1,0,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("401 left shift up"), jbm.mkCmdUnshift(1));
 		// right
-		jbm.map(0x501,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(2));
-		jbm.map(0x501,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(2));
+		jbm.map(0x501,0,1,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("501 right shift down"), jbm.mkCmdShift(2));
+		jbm.map(0x501,1,0,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("501 right shift up"), jbm.mkCmdUnshift(2));
 
 		// Error sound if any button is pressed without a shift.
 		ButtonCommand fail=new CmdSound(PLUCK);
@@ -115,9 +118,9 @@ public class JoystickMediaPlayerClient
 
 
 		// Exit command: Both shifts, select, and start
-		ChordCommand exCmd=new ChordCommand(3,new CmdLog("exiting"),exitj,exitm);
-		jbm.map(0x0801,0,1,(short)3,exCmd.mkSet(1)); // SELECT - press
-		jbm.map(0x0901,0,1,(short)3,exCmd.mkSet(2)); // START - press
+		ChordCommand exCmd=new ChordCommand(3,CmdLog.info("exiting"),new CmdSay("bye"),new CmdPause(1000),exitj,exitm);
+		jbm.map(0x0801,0,1,(short)3,CmdLog.debug("801 select down"), exCmd.mkSet(1)); // SELECT - press
+		jbm.map(0x0901,0,1,(short)3,CmdLog.debug("901 start down"), exCmd.mkSet(2)); // START - press
 		// the 'real' select & start commands will also call
 		// cmdMaybeExit, which will either exit, or
 		// unset the exState
@@ -126,30 +129,44 @@ public class JoystickMediaPlayerClient
 		// Select - change play mode (maybe exit)
 		// (Modes are track-once and playlist-once)
 		//
-		jbm.map(0x0801,1,0,(short)3,exCmd.mkCheck(1),status,new CmdLog("select_1",true),new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
-		jbm.map(0x0801,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdLog("select_2",true),new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,(short)3,exCmd.mkCheck(1),CmdLog.debug("801 select_1"),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("801 select_2"),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
 
 		//
 		// Start - play/pause (maybe exit)
+		// The 'play' command starts the next track, if the last one ended.
 		//
-		jbm.map(0x0901,1,0,(short)3,new CmdLog("start_1",true),exCmd.mkCheck(2),status,new CmdPlayPause(status)); // START - exit mode
-		jbm.map(0x0901,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,status,new CmdLog("start_2",true),new CmdPlayPause(status));
+		jbm.map(0x0901,1,0,(short)3,CmdLog.debug("901 start_1"),status,exCmd.mkCheck(2),new CmdPlayPause(status)); // START - exit mode
+		jbm.map(0x0901,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("901 start_2"),status,new CmdPlayPause(status));
 
 		//
 		// DPad Vert - volume up & down
 		//
-		jbm.map(0x0102,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,10));
-		jbm.map(0x0102,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,status,new CmdVolume(status,-10));
+		jbm.map(0x0102,ButtonMapper.NEGATIVE,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("102 Up"),status,new CmdVolume(status,10));
+		jbm.map(0x0102,ButtonMapper.POSITIVE,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("102 Down"),status,new CmdVolume(status,-10));
 
+		//
+		// DPad Horz - ffwd/rev, prev/next playlist folder (announce name) when both shifts are pressed
+		//
+		
+		//
+		// Y/A - track next/prev
+		//
+		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("301 Y track prev"),status, new CmdTrack(status,"previous")); // Y
+		jbm.map(0x0101,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("101 A track prev"),status, new CmdTrack(status,"next")); // Y
+
+		
+		// X/B - playlist next/prev (announce name)
+		
+		
 		// Buttons from test program
-
 		// Map most of the buttons
 
-		jbm.map(0x0001,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("X",true));
-		jbm.map(0x0001,1,0,ButtonMapper.NO_SHIFT,new CmdSound(PLUCK));
-		jbm.map(0x0101,1,0,ButtonMapper.ANY_SHIFT_STATE,new CmdLog("A",true));
-		jbm.map(0x0201,1,0,(short)3,new CmdLog("B",true));
-		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("Y",true));
+//		jbm.map(0x0001,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("X",true));
+//		jbm.map(0x0001,1,0,ButtonMapper.NO_SHIFT,new CmdSound(PLUCK));
+//		jbm.map(0x0101,1,0,ButtonMapper.ANY_SHIFT_STATE,new CmdLog("A",true));
+//		jbm.map(0x0201,1,0,(short)3,new CmdLog("B",true));
+//		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("Y",true));
 
 		// joystick LEFT
 		//jbm.map(0x0002,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the left"),new SuperSecretCmd(1));

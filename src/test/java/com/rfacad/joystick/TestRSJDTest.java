@@ -19,10 +19,10 @@ public class TestRSJDTest {
 		// Create a file containing button 0x109 being pressed.
 		FileOutputStream out=new FileOutputStream(f);
 		List<short[]> calls = new ArrayList<>();
-		calls.add( new short[] {(short)0x109,(short)0} );
-		calls.add( new short[] {(short)0x109,(short)1} );
-		calls.add( new short[] {(short)0x109,(short)0} );
-		calls.add( new short[] {(short)0x109,(short)1} );
+		calls.add( new short[] {(short)0x901,(short)0} );
+		calls.add( new short[] {(short)0x901,(short)1} );
+		calls.add( new short[] {(short)0x901,(short)0} );
+		calls.add( new short[] {(short)0x901,(short)1} );
 		byte [] content=new byte[calls.size()*8];
 		for(int i=0;i<calls.size();i++)
 		{
@@ -45,6 +45,8 @@ public class TestRSJDTest {
 		out.close();
 		
 		RSJDTest.main(new String[] {fn});
+		
+		try { Thread.sleep(1000);}catch(InterruptedException e) {}
 		
 		f.delete();
 	}

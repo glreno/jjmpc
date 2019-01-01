@@ -9,7 +9,7 @@ public class RSJDTest implements RSJDListener
 	public void button(short id,short prev,short value)
 	{
 		System.out.println("ID:"+Integer.toHexString(id)+" Prev:"+prev+" Value:"+value);
-		if ( id==0x0109 ) {
+		if ( id==0x0901 ) {
 			// That's the 'start' button
 			// This will be called on the press (value==1)
 			// but if you exit immediately, the release (value==0)

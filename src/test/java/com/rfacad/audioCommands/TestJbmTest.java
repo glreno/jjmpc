@@ -24,26 +24,26 @@ public class TestJbmTest {
 		// Create a file containing button 0x109 being pressed.
 		FileOutputStream out=new FileOutputStream(f);
 		List<short[]> calls = new ArrayList<>();
-		calls.add( new short[] {(short)0x105,(short)0} );
-		calls.add( new short[] {(short)0x200,(short)-1} ); // shift to the left
-		calls.add( new short[] {(short)0x200,(short)0} );
-		calls.add( new short[] {(short)0x105,(short)1} );
-		calls.add( new short[] {(short)0x200,(short)-1} ); // shift to the left (but shift isn't pressed, so oops.
-		calls.add( new short[] {(short)0x200,(short)0} );
-		calls.add( new short[] {(short)0x105,(short)0} );
-		calls.add( new short[] {(short)0x200,(short)-1} ); // shift to the left
-		calls.add( new short[] {(short)0x200,(short)0} );
-		calls.add( new short[] {(short)0x200,(short)+1} ); // shift to the right
-		calls.add( new short[] {(short)0x200,(short)0} );
-		calls.add( new short[] {(short)0x201,(short)-1} ); // pop up
-		calls.add( new short[] {(short)0x201,(short)0} );
-		calls.add( new short[] {(short)0x201,(short)+1} ); // push down
-		calls.add( new short[] {(short)0x201,(short)0} );
-		calls.add( new short[] {(short)0x105,(short)1} );
-		calls.add( new short[] {(short)0x109,(short)0} );
-		calls.add( new short[] {(short)0x109,(short)1} );
-		calls.add( new short[] {(short)0x109,(short)0} );
-		calls.add( new short[] {(short)0x109,(short)1} );
+		calls.add( new short[] {(short)0x501,(short)0} );
+		calls.add( new short[] {(short)0x002,(short)-1} ); // shift to the left
+		calls.add( new short[] {(short)0x002,(short)0} );
+		calls.add( new short[] {(short)0x501,(short)1} );
+		calls.add( new short[] {(short)0x002,(short)-1} ); // shift to the left (but shift isn't pressed, so oops.
+		calls.add( new short[] {(short)0x002,(short)0} );
+		calls.add( new short[] {(short)0x501,(short)0} );
+		calls.add( new short[] {(short)0x002,(short)-1} ); // shift to the left
+		calls.add( new short[] {(short)0x002,(short)0} );
+		calls.add( new short[] {(short)0x002,(short)+1} ); // shift to the right
+		calls.add( new short[] {(short)0x002,(short)0} );
+		calls.add( new short[] {(short)0x102,(short)-1} ); // pop up
+		calls.add( new short[] {(short)0x102,(short)0} );
+		calls.add( new short[] {(short)0x102,(short)+1} ); // push down
+		calls.add( new short[] {(short)0x102,(short)0} );
+		calls.add( new short[] {(short)0x501,(short)1} );
+		calls.add( new short[] {(short)0x901,(short)0} );
+		calls.add( new short[] {(short)0x901,(short)1} );
+		calls.add( new short[] {(short)0x901,(short)0} );
+		calls.add( new short[] {(short)0x901,(short)1} );
 		byte [] content=new byte[calls.size()*8];
 		for(int i=0;i<calls.size();i++)
 		{

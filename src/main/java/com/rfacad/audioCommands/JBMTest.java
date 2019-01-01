@@ -1,5 +1,7 @@
 package com.rfacad.audioCommands;
 
+import org.apache.logging.log4j.Level;
+
 import com.rfacad.buttons.BState;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.CmdLog;
@@ -54,38 +56,37 @@ public class JBMTest
 		jdriver.setListener(jbm);
 
 		CmdExitJoystickDriver exitj=new CmdExitJoystickDriver(jdriver);
-		CmdLog log=new CmdLog();
 	
 		// on error, say oops
 		jbm.onError(new CmdSay("oops"));
 
 
 		// Map most of the buttons
-		jbm.map(0x0109,1,0,ButtonMapper.ANY_SHIFT_STATE,exitj);
+		jbm.map(0x0901,1,0,ButtonMapper.ANY_SHIFT_STATE,exitj);
 
-		jbm.map(0x0100,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("X",true));
-		jbm.map(0x0100,1,0,ButtonMapper.NO_SHIFT,new CmdSh(false,APLAY,PLUCK));
-		jbm.map(0x0101,1,0,ButtonMapper.ANY_SHIFT_STATE,new CmdLog("A",true));
-		jbm.map(0x0102,1,0,(short)3,new CmdLog("B",true));
-		jbm.map(0x0103,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("Y",true));
+		jbm.map(0x0001,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog(Level.INFO,"X",true));
+		jbm.map(0x0001,1,0,ButtonMapper.NO_SHIFT,new CmdSh(false,APLAY,PLUCK));
+		jbm.map(0x0101,1,0,ButtonMapper.ANY_SHIFT_STATE,new CmdLog(Level.INFO,"A",true));
+		jbm.map(0x0201,1,0,(short)3,new CmdLog(Level.INFO,"B",true));
+		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog(Level.INFO,"Y",true));
 
 		// left
-		jbm.map(0x104,0,1,ButtonMapper.ANY_SHIFT_STATE,
+		jbm.map(0x0401,0,1,ButtonMapper.ANY_SHIFT_STATE,
 			jbm.mkCmdShift(1)
 		);
-		jbm.map(0x104,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(1));
+		jbm.map(0x0401,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(1));
 		// right
-		jbm.map(0x105,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(2));
-		jbm.map(0x105,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(2));
+		jbm.map(0x0501,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(2));
+		jbm.map(0x0501,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(2));
 
 		// joystick LEFT
-		jbm.map(0x200,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the left"),new SuperSecretCmd(1));
+		jbm.map(0x0002,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the left"),new SuperSecretCmd(1));
 		// joystick RIGHT
-		jbm.map(0x200,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the right"),new SuperSecretCmd(2));
+		jbm.map(0x0002,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the right"),new SuperSecretCmd(2));
 		// joystick UP
-		jbm.map(0x201,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("pop up"),new SuperSecretCmd(3));
+		jbm.map(0x0102,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("pop up"),new SuperSecretCmd(3));
 		// joystick DOWN
-		jbm.map(0x201,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("push down"),new SuperSecretCmd(4));
+		jbm.map(0x0102,ButtonMapper.POSITIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("push down"),new SuperSecretCmd(4));
 
 		// Init code
 		new CmdSay("Greetings").button(null);
