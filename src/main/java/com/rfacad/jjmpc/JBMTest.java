@@ -3,6 +3,7 @@ package com.rfacad.jjmpc;
 import com.rfacad.buttons.BState;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.CmdLog;
+import com.rfacad.buttons.CmdPause;
 import com.rfacad.buttons.CmdSh;
 import com.rfacad.buttons.mapper.ButtonMapper;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;

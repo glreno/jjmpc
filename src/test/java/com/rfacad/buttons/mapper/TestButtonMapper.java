@@ -1,4 +1,4 @@
-package com.rfacad.buttons;
+package com.rfacad.buttons.mapper;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.rfacad.buttons.BState;
+import com.rfacad.buttons.ButtonCommand;
+import com.rfacad.buttons.MockCmd;
 import com.rfacad.buttons.mapper.ButtonMapper;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")

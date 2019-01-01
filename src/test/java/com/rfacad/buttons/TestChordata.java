@@ -1,10 +1,8 @@
-package com.rfacad.jjmpc;
+package com.rfacad.buttons;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.rfacad.buttons.BState;
-import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.ChordCommand;
 import com.rfacad.buttons.mapper.ButtonMapper;
 import com.rfacad.buttons.MockCmd;
