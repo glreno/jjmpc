@@ -78,7 +78,7 @@ public class PlaylistToplevelTest {
 		assertEquals(FOLDER2,ret1.get(0));
 		assertEquals(FOLDER1,ret1.get(1));
 		
-		List<String> list1=(List<String>)bs1.get(CACHEKEY);
+		List<String> list1=bs1.getStringList(CACHEKEY);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(FOLDER2,list1.get(0));
@@ -92,7 +92,7 @@ public class PlaylistToplevelTest {
 		assertEquals(FOLDER2,ret2.get(0));
 		assertEquals(FOLDER1,ret2.get(1));
 
-		List<String> list2=(List<String>)bs2.get(CACHEKEY);
+		List<String> list2=bs2.getStringList(CACHEKEY);
 		assertNotNull(list2);
 		assertEquals(2,list2.size());
 		assertEquals(FOLDER2,list2.get(0));
@@ -118,7 +118,7 @@ public class PlaylistToplevelTest {
 		assertEquals(FOLDER2,ret1.get(0));
 		assertEquals(FOLDER1,ret1.get(1));
 
-		List<String> list1=(List<String>)bs1.get(CACHEKEY);
+		List<String> list1=bs1.getStringList(CACHEKEY);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(FOLDER2,list1.get(0));
@@ -139,7 +139,7 @@ public class PlaylistToplevelTest {
 		assertEquals(FOLDER1,ret2.get(1));
 		assertEquals(FOLDER3,ret2.get(2));
 		
-		List<String> list2=(List<String>)bs2.get(CACHEKEY);
+		List<String> list2=bs2.getStringList(CACHEKEY);
 		assertNotNull(list2);
 		assertEquals(3,list2.size());
 		assertEquals(FOLDER2,list2.get(0));
@@ -154,7 +154,7 @@ public class PlaylistToplevelTest {
 		assertEquals(FOLDER2,ret3.get(0));
 		assertEquals(FOLDER1,ret3.get(1));
 		
-		List<String> list3=(List<String>)bs1.get(CACHEKEY);
+		List<String> list3=bs1.getStringList(CACHEKEY);
 		assertNotNull(list3);
 		assertEquals(2,list3.size());
 		assertEquals(FOLDER2,list3.get(0));
@@ -181,7 +181,7 @@ public class PlaylistToplevelTest {
 		assertEquals(FOLDER1,ret1.get(1));
 
 
-		List<String> list1=(List<String>)bs1.get(CACHEKEY);
+		List<String> list1=bs1.getStringList(CACHEKEY);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(FOLDER2,list1.get(0));
@@ -198,7 +198,7 @@ public class PlaylistToplevelTest {
 		assertEquals(1,ret2.size());
 		assertEquals(FOLDER2,ret2.get(0));
 	
-		List<String> list2=(List<String>)bs2.get(CACHEKEY);
+		List<String> list2=bs2.getStringList(CACHEKEY);
 		assertNotNull(list2);
 		assertEquals(1,list2.size());
 		assertEquals(FOLDER2,list2.get(0));
@@ -211,7 +211,7 @@ public class PlaylistToplevelTest {
 		assertEquals(FOLDER2,ret3.get(0));
 		assertEquals(FOLDER1,ret3.get(1));
 
-		List<String> list3=(List<String>)bs1.get(CACHEKEY);
+		List<String> list3=bs1.getStringList(CACHEKEY);
 		assertNotNull(list3);
 		assertEquals(2,list3.size());
 		assertEquals(FOLDER2,list3.get(0));

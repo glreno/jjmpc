@@ -16,7 +16,7 @@ public class TestCmdSound
 	public void shouldPlaySound() {
 		short s0=(short)0;
 		BState state=new ButtonState(s0, s0, s0);
-		state.set("foo", "bar");
+		state.setString("foo", "bar");
 
 		CmdSh cmd1 = new CmdSound("%foo%");
 		cmd1.setTestMode(true);
@@ -35,7 +35,7 @@ public class TestCmdSound
 	public void shouldSayPhrase() {
 		short s0=(short)0;
 		BState state=new ButtonState(s0, s0, s0);
-		state.set("foo", "bar");
+		state.setString("foo", "bar");
 
 		CmdSh cmd1 = new CmdSay("%foo%");
 		cmd1.setTestMode(true);

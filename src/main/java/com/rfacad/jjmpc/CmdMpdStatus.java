@@ -26,7 +26,7 @@ public class CmdMpdStatus extends CmdMpd implements ButtonCommand
 			if ( colon > 0 ) {
 				String key = s.substring(0,colon).trim();
 				String val = s.substring(colon+1).trim();
-				state.set(key,val);
+				state.setString(key,val);
 			}
 		}
 		return true;

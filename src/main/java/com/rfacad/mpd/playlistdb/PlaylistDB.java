@@ -39,22 +39,14 @@ public class PlaylistDB implements PlaylistDBI {
 		// for everything in the top-level directory
 
 		log.debug("listPlaylistFolders");
-		List<String> dirs=null;
-		Object cache=bs.get(FOLDERS);
-		if ( cache != null )
+		List<String> dirs=bs.getStringList(FOLDERS);
+		if ( dirs != null )
 		{
-			try
-			{
-				// We have a cached set, so use it.
-				// (cache is in the BState, so there is a new cache for every button press)
-				dirs=(List<String>)cache;
-				log.debug("Found list in BState");
-			}
-			catch (ClassCastException e)
-			{}
+			// We have a cached set, so use it.
+			// (cache is in the BState, so there is a new cache for every button press)
+			log.debug("Found list in BState");
 		}
-		
-		if ( dirs == null )
+		else
 		{
 	
 			log.debug("Requesting list of top-level dirs from MPD");
@@ -91,7 +83,7 @@ public class PlaylistDB implements PlaylistDBI {
 			}
 			
 			dirs=new ArrayList<String>(found);
-			bs.set(FOLDERS, new ArrayList<String>(dirs));
+			bs.setStringList(FOLDERS, new ArrayList<String>(dirs));
 		}
 		log.debug("Found {} folders",dirs.size());
 		return dirs;
@@ -100,23 +92,13 @@ public class PlaylistDB implements PlaylistDBI {
 	@Override
 	public List<String> listPlaylists(BState bs, String folder) {
 		log.debug("listPlaylists in folder {}",folder);
-		List<String> dirs=null;
 		String cachekey = PLAYLISTS_IN_FOLDER_PREFIX+folder;
-		Object cache=bs.get(cachekey);
-		if ( cache!=null )
+		List<String> dirs=bs.getStringList(cachekey);
+		if ( dirs!=null )
 		{
-			try
-			{
-				// We have a cached set, so use it.
-				// (cache is in the BState, so there is a new cache for every button press)
-				dirs=(List<String>)cache;
-				log.debug("Found list in BState");
-			}
-			catch (ClassCastException e)
-			{}
+			log.debug("Found list in BState");
 		}
-		
-		if ( dirs == null )
+		else
 		{
 			log.debug("Requesting list of subdirs from MPD");
 	
@@ -155,7 +137,7 @@ public class PlaylistDB implements PlaylistDBI {
 			}
 			
 			dirs=new ArrayList<String>(found);
-			bs.set(cachekey, new ArrayList<String>(dirs));
+			bs.setStringList(cachekey, new ArrayList<String>(dirs));
 		}
 		log.debug("Found {} playlists",dirs.size());
 		return dirs;
@@ -164,23 +146,15 @@ public class PlaylistDB implements PlaylistDBI {
 	@Override
 	public List<String> listFiles(BState bs, String playlistid) {
 		log.debug("listFiles in playlist {}",playlistid);
-		List<String> files=null;
 		String cachekey = FILES_IN_PLAYLIST_PREFIX+playlistid;
-		Object cache=bs.get(cachekey);
-		if ( cache != null )
+		List<String> files=bs.getStringList(cachekey);
+		if ( files != null )
 		{
-			try
-			{
-				// We have a cached set, so use it.
-				// (cache is in the BState, so there is a new cache for every button press)
-				files=(List<String>)cache;
-				log.debug("Found list in BState");
-			}
-			catch (ClassCastException e)
-			{}
+			// We have a cached set, so use it.
+			// (cache is in the BState, so there is a new cache for every button press)
+			log.debug("Found list in BState");
 		}
-		
-		if ( files == null )
+		else
 		{
 			int dash=playlistid.indexOf("--");
 			if ( (dash < 1) || (dash==playlistid.length()-2) )
@@ -226,7 +200,7 @@ public class PlaylistDB implements PlaylistDBI {
 			}
 
 			files=new ArrayList<String>(found);
-			bs.set(cachekey, new ArrayList<String>(files));
+			bs.setStringList(cachekey, new ArrayList<String>(files));
 		}
 		log.debug("Found {} files",files.size());
 		return files;
@@ -235,23 +209,15 @@ public class PlaylistDB implements PlaylistDBI {
 
 	protected List<String> listM3U(BState bs, String playlistid) {
 		log.debug("listFiles in playlist.m3u {}",playlistid);
-		List<String> files=null;
 		String cachekey = FILES_IN_M3U_PREFIX+playlistid;
-		Object cache=bs.get(cachekey);
-		if ( cache != null )
-			{
-			try
-			{
-				// We have a cached set, so use it.
-				// (cache is in the BState, so there is a new cache for every button press)
-				files=(List<String>)cache;
-				log.debug("Found list in BState");
-			}
-			catch (ClassCastException e)
-			{}
+		List<String> files=bs.getStringList(cachekey);
+		if ( files != null )
+		{
+			// We have a cached set, so use it.
+			// (cache is in the BState, so there is a new cache for every button press)
+			log.debug("Found list in BState");
 		}
-		
-		if ( files == null )
+		else
 		{
 			int dash=playlistid.indexOf("--");
 			if ( (dash < 1) || (dash==playlistid.length()-2) )
@@ -295,7 +261,7 @@ public class PlaylistDB implements PlaylistDBI {
 			}
 
 			files=new ArrayList<String>(found);
-			bs.set(cachekey, new ArrayList<String>(files));
+			bs.setStringList(cachekey, new ArrayList<String>(files));
 		}
 		log.debug("Found {} files",files.size());
 		return files;
@@ -383,7 +349,7 @@ public class PlaylistDB implements PlaylistDBI {
 			log.debug("MPD load of {} succeeded",playlistid);
 		}
 		
-		bs.set(PLAYLIST_LOADED, playlistid);
+		bs.setString(PLAYLIST_LOADED, playlistid);
 		mostRecentlyLoadedPlaylist = playlistid;
 		
 		return true;
@@ -392,7 +358,7 @@ public class PlaylistDB implements PlaylistDBI {
 	// Unit test only!!!
 	public void setMostRecentPlaylist(BState bs,String playlistid)
 	{
-		bs.set(PLAYLIST_LOADED, playlistid);
+		bs.setString(PLAYLIST_LOADED, playlistid);
 		mostRecentlyLoadedPlaylist = playlistid;
 	}
 	
@@ -407,10 +373,9 @@ public class PlaylistDB implements PlaylistDBI {
 		log.debug("No playlist loaded since restart, checking MPD status");
 		// So much for the easy way out.
 		// Is there a current song being played/paused?
-		Object songido=bs.get("songid");
-		if ( songido != null )
+		String songid=bs.getString("songid");
+		if ( songid != null )
 		{
-			String songid=songido.toString();
 			log.debug("Current track is songid={}, getting playlistinfo",songid);
 			
 			// This SHOULD be in the currently loaded playlist, whatever it is

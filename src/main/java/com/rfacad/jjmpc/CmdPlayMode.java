@@ -13,10 +13,9 @@ public class CmdPlayMode extends AbstractCmdMpd implements ButtonCommand
 	}
 	public boolean button(BState state)
 	{
-		Object o=state.get("single");
-		if (o!=null)
+		String s=state.getString("single");
+		if (s!=null)
 		{
-			String s=o.toString();
 			try {
 				int mode=Integer.parseInt(s);
 				mode = 1 - mode;
@@ -25,10 +24,10 @@ public class CmdPlayMode extends AbstractCmdMpd implements ButtonCommand
 				if ( ret ) {
 					// Success. Update state variable
 					if ( mode == 1 ) {
-						state.set("mode","Track once");
+						state.setString("mode","Track once");
 					}
 					else {
-						state.set("mode","Playlist once");
+						state.setString("mode","Playlist once");
 					}
 				}
 				return ret;

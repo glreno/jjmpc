@@ -17,6 +17,11 @@ public class TestButtonMapper
 {
 	private static final short S0=(short)0;
 	private static final short S1=(short)1;
+	private static final String B0=ButtonMapper.NO_SHIFT;
+	private static final String B1="Button 1";
+	private static final String B2="Button 2";
+	private static final String [] B1_AND_B2 = new String[] { B1,B2};
+	private static final String B4="button 4";
 	
 	@Test
 	public void shouldDoNothing()
@@ -30,7 +35,7 @@ public class TestButtonMapper
 	{
 		ButtonMapper bm=new ButtonMapper();
 		MockCmd c1=new MockCmd();
-		bm.map(0,1,0,S0,c1);
+		bm.map(0,1,0,B0,c1);
 		bm.button(S0,S1,S0);
 		List<BState> calls1 = c1.getCalls();
 		assertEquals(1,calls1.size());
@@ -38,8 +43,9 @@ public class TestButtonMapper
 		assertEquals(S0,state1.getButtonId());
 		assertEquals(S1,state1.getPrevValue());
 		assertEquals(S0,state1.getNewValue());
-		Byte ss1=(Byte) state1.get(BState.SHIFT);
-		assertEquals((byte)0,ss1.byteValue());
+		List<String> ss1=state1.getStringList(BState.SHIFT);
+		assertNotNull(ss1);
+		assertTrue(ss1.isEmpty());
 	}
 
 	
@@ -49,7 +55,7 @@ public class TestButtonMapper
 		ButtonMapper bm=new ButtonMapper();
 		MockCmd c1=new MockCmd(false); // return false, indicating error
 		MockCmd c2=new MockCmd();
-		bm.map(0,1,0,S0,c1);
+		bm.map(0,1,0,B0,c1);
 		bm.onError(c2);
 		bm.button(S0,S1,S0);
 		c1.assertCalls(1);
@@ -79,7 +85,7 @@ public class TestButtonMapper
 		c_p1.assertCalls(   0);
 		c_pos.assertCalls(  0);
 		
-		bm.map(0,ButtonMapper.ANY,0,S0,c_any);
+		bm.map(0,ButtonMapper.ANY,0,B0,c_any);
 		// ANY should work, since there is nothing else defined
 		bm.button(S0,S0,S0);
 		c_any.assertCalls(  1);
@@ -89,11 +95,11 @@ public class TestButtonMapper
 		c_p1.assertCalls(   0);
 		c_pos.assertCalls(  0);
 		
-		bm.map(0,ButtonMapper.NEGATIVE,0,S0,c_neg);
-		bm.map(0,ButtonMapper.POSITIVE,0,S0,c_pos);
-		bm.map(0,(short)-1,0,S0,c_m1);
-		bm.map(0,(short)0,0,S0,c_zero);
-		bm.map(0,(short)1,0,S0,c_p1);
+		bm.map(0,ButtonMapper.NEGATIVE,0,B0,c_neg);
+		bm.map(0,ButtonMapper.POSITIVE,0,B0,c_pos);
+		bm.map(0,(short)-1,0,B0,c_m1);
+		bm.map(0,(short)0,0,B0,c_zero);
+		bm.map(0,(short)1,0,B0,c_p1);
 		
 		// -2: should fire NEG
 		bm.button(S0,(short)-2,S0);
@@ -164,7 +170,7 @@ public class TestButtonMapper
 		c_p1.assertCalls(   0);
 		c_pos.assertCalls(  0);
 		
-		bm.map(0,0,ButtonMapper.ANY,S0,c_any);
+		bm.map(0,0,ButtonMapper.ANY,B0,c_any);
 		// ANY should work, since there is nothing else defined
 		bm.button(S0,S0,S0);
 		c_any.assertCalls(  1);
@@ -174,11 +180,11 @@ public class TestButtonMapper
 		c_p1.assertCalls(   0);
 		c_pos.assertCalls(  0);
 		
-		bm.map(0,0,ButtonMapper.NEGATIVE,S0,c_neg);
-		bm.map(0,0,ButtonMapper.POSITIVE,S0,c_pos);
-		bm.map(0,0,(short)-1,S0,c_m1);
-		bm.map(0,0,(short)0,S0,c_zero);
-		bm.map(0,0,(short)1,S0,c_p1);
+		bm.map(0,0,ButtonMapper.NEGATIVE,B0,c_neg);
+		bm.map(0,0,ButtonMapper.POSITIVE,B0,c_pos);
+		bm.map(0,0,(short)-1,B0,c_m1);
+		bm.map(0,0,(short)0,B0,c_zero);
+		bm.map(0,0,(short)1,B0,c_p1);
 		
 		// -2: should fire NEG
 		bm.button(S0,S0,(short)-2);
@@ -254,9 +260,9 @@ public class TestButtonMapper
 		MockCmd c_2=new MockCmd();
 		MockCmd c_1=new MockCmd();
 		MockCmd c_0=new MockCmd();
-		ButtonCommand s1=bm.mkCmdShift(1);
-		ButtonCommand s2=bm.mkCmdShift(2);
-		ButtonCommand s4=bm.mkCmdShift(4);
+		ButtonCommand s1=bm.mkCmdShift(B1);
+		ButtonCommand s2=bm.mkCmdShift(B2);
+		ButtonCommand s4=bm.mkCmdShift(B4);
 		c_n.assertCalls( 0);
 		c_a.assertCalls( 0);
 		c_3.assertCalls( 0);
@@ -266,16 +272,16 @@ public class TestButtonMapper
 		
 		// These are the button presses that set the shifts
 		// They only work in NO_SHIFT_STATE!
-		bm.map(1,1,0,S0,      s1);
-		bm.map(2,1,0,S0,   s2);
-		bm.map(3,1,0,S0,   s2,s1);
-		bm.map(4,1,0,S0,s4);
-		bm.map(5,1,0,S0,s4,   s1);
-		bm.map(6,1,0,S0,s4,s2);
-		bm.map(7,1,0,S0,s4,s2,s1);
+		bm.map(1,1,0,B0,      s1);
+		bm.map(2,1,0,B0,   s2);
+		bm.map(3,1,0,B0,   s2,s1);
+		bm.map(4,1,0,B0,s4);
+		bm.map(5,1,0,B0,s4,   s1);
+		bm.map(6,1,0,B0,s4,s2);
+		bm.map(7,1,0,B0,s4,s2,s1);
 		
 		// This one clears the shifts
-		bm.map(101,1,0,ButtonMapper.ANY_SHIFT_STATE,bm.mkCmdUnshift(1),bm.mkCmdUnshift(2),bm.mkCmdUnshift(4));
+		bm.map(101,1,0,ButtonMapper.ANY_SHIFT_STATE,bm.mkCmdUnshift(B1),bm.mkCmdUnshift(B2),bm.mkCmdUnshift(B4));
 		
 		bm.map(100,1,0,ButtonMapper.ANY_SHIFT_STATE,c_n);
 		bm.button((short)100,S1,S0);
@@ -298,9 +304,9 @@ public class TestButtonMapper
 		
 		// Any works, so register the other calls
 		bm.map(100,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,c_a);
-		bm.map(100,1,0,(short)3,c_3);
-		bm.map(100,1,0,(short)2,c_2);
-		bm.map(100,1,0,(short)1,c_1);
+		bm.map(100,1,0,B1_AND_B2,c_3);
+		bm.map(100,1,0,B2,c_2);
+		bm.map(100,1,0,B1,c_1);
 		bm.map(100,1,0,ButtonMapper.NO_SHIFT,c_0);
 
 		// And now the real tests.

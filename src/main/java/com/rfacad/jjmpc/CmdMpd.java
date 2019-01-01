@@ -1,8 +1,5 @@
 package com.rfacad.jjmpc;
 
-import java.util.*;
-import java.util.concurrent.*;
-
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.mpd.interfaces.RidiculouslySimpleMPDClientI;

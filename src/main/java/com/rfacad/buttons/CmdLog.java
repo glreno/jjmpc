@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.rfacad.buttons.interfaces.BState;
+import com.rfacad.buttons.mapper.ButtonMapper;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdLog implements ButtonCommand
@@ -36,7 +37,7 @@ public class CmdLog implements ButtonCommand
 			log.log(level,"ID:"+Integer.toHexString(bs.getButtonId())
 			+" Prev:"+bs.getPrevValue()
 			+" Value:"+bs.getNewValue()
-			+" Shifts:"+bs.get(BState.SHIFT));
+			+" Shifts:"+ButtonMapper.squash(bs.getStringList(BState.SHIFT)));
 		}
 		if ( msg != null )
 		{

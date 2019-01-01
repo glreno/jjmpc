@@ -68,25 +68,25 @@ public class TestCmdTrackNext
 	public static BState loadPlaylistState()
 	{
 		BState bs=new MockBState();
-		bs.set(PlaylistDBI.FOLDERS, Arrays.asList(FOLDERS));
-		bs.set(PlaylistDBI.PLAYLISTS_IN_FOLDER_PREFIX+FOLDERS[0], Arrays.asList(PLAYLISTS0));
-		bs.set(PlaylistDBI.PLAYLISTS_IN_FOLDER_PREFIX+FOLDERS[1], Arrays.asList(PLAYLISTS1));
-		bs.set(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS0[0], Arrays.asList(FILES00));
-		bs.set(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS0[1], Arrays.asList(FILES01));
-		bs.set(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS1[0], Arrays.asList(FILES10));
-		bs.set(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS1[1], Arrays.asList(FILES11));
-		bs.set(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS0[0], PATHS00);
-		bs.set(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS0[1], PATHS01);
-		bs.set(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS1[0], PATHS10);
-		bs.set(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS1[1], PATHS11);
+		bs.setStringList(PlaylistDBI.FOLDERS, Arrays.asList(FOLDERS));
+		bs.setStringList(PlaylistDBI.PLAYLISTS_IN_FOLDER_PREFIX+FOLDERS[0], Arrays.asList(PLAYLISTS0));
+		bs.setStringList(PlaylistDBI.PLAYLISTS_IN_FOLDER_PREFIX+FOLDERS[1], Arrays.asList(PLAYLISTS1));
+		bs.setStringList(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS0[0], Arrays.asList(FILES00));
+		bs.setStringList(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS0[1], Arrays.asList(FILES01));
+		bs.setStringList(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS1[0], Arrays.asList(FILES10));
+		bs.setStringList(PlaylistDBI.FILES_IN_PLAYLIST_PREFIX+PLAYLISTS1[1], Arrays.asList(FILES11));
+		bs.setStringList(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS0[0], PATHS00);
+		bs.setStringList(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS0[1], PATHS01);
+		bs.setStringList(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS1[0], PATHS10);
+		bs.setStringList(PlaylistDBI.FILES_IN_M3U_PREFIX+PLAYLISTS1[1], PATHS11);
 		return bs;
 	}
 	
 	public static void setStatus(BState bs, String state, int playlistlength, String elapsed)
 	{
-		bs.set("state", state);
-		if ( playlistlength>-1) bs.set("playlistlength", Integer.toString(playlistlength));
-		if ( elapsed != null ) bs.set("elapsed", elapsed);
+		bs.setString("state", state);
+		if ( playlistlength>-1) bs.setString("playlistlength", Integer.toString(playlistlength));
+		if ( elapsed != null ) bs.setString("elapsed", elapsed);
 	}
 	
 	// "Next" commands:

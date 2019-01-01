@@ -21,6 +21,10 @@ public class JoystickMediaPlayerClient
 {
 	private static final Logger log = LogManager.getLogger(JoystickMediaPlayerClient.class);
 
+	private static final String L = "L";
+	private static final String R = "R";
+	private static String [] BOTH=new String[] { L, R };
+
 	private static String PLUCK="/usr/lib/libreoffice/share/gallery/sounds/pluck.wav";
 	private RidiculouslySimpleJoystickDriver jdriver;
 	private RidiculouslySimpleMPDClient mdriver;
@@ -102,11 +106,11 @@ public class JoystickMediaPlayerClient
 		// All command buttons require that a shift button be pressed.
 
 		// left
-		jbm.map(0x401,0,1,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("401 left shift down"), jbm.mkCmdShift(1));
-		jbm.map(0x401,1,0,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("401 left shift up"), jbm.mkCmdUnshift(1));
+		jbm.map(0x401,0,1,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("401 left shift down"), jbm.mkCmdShift(L));
+		jbm.map(0x401,1,0,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("401 left shift up"), jbm.mkCmdUnshift(L));
 		// right
-		jbm.map(0x501,0,1,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("501 right shift down"), jbm.mkCmdShift(2));
-		jbm.map(0x501,1,0,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("501 right shift up"), jbm.mkCmdUnshift(2));
+		jbm.map(0x501,0,1,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("501 right shift down"), jbm.mkCmdShift(R));
+		jbm.map(0x501,1,0,ButtonMapper.ANY_SHIFT_STATE,CmdLog.debug("501 right shift up"), jbm.mkCmdUnshift(R));
 
 		// Error sound if any button is pressed without a shift.
 		ButtonCommand fail=new CmdSound(PLUCK);
@@ -122,8 +126,8 @@ public class JoystickMediaPlayerClient
 
 		// Exit command: Both shifts, select, and start
 		ChordCommand exCmd=new ChordCommand(3,CmdLog.info("exiting"),new CmdSay("bye"),new CmdPause(1000),exitj,exitm);
-		jbm.map(0x0801,0,1,(short)3,CmdLog.debug("801 select down"), exCmd.mkSet(1)); // SELECT - press
-		jbm.map(0x0901,0,1,(short)3,CmdLog.debug("901 start down"), exCmd.mkSet(2)); // START - press
+		jbm.map(0x0801,0,1,BOTH,CmdLog.debug("801 select down"), exCmd.mkSet(1)); // SELECT - press
+		jbm.map(0x0901,0,1,BOTH,CmdLog.debug("901 start down"), exCmd.mkSet(2)); // START - press
 		// the 'real' select & start commands will also call
 		// cmdMaybeExit, which will either exit, or
 		// unset the exState
@@ -132,14 +136,14 @@ public class JoystickMediaPlayerClient
 		// Select - change play mode (maybe exit)
 		// (Modes are track-once and playlist-once)
 		//
-		jbm.map(0x0801,1,0,(short)3,exCmd.mkCheck(1),CmdLog.debug("801 select_1"),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,BOTH,exCmd.mkCheck(1),CmdLog.debug("801 select_1"),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
 		jbm.map(0x0801,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("801 select_2"),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
 
 		//
 		// Start - play/pause (maybe exit)
 		// The 'play' command starts the next track, if the last one ended.
 		//
-		jbm.map(0x0901,1,0,(short)3,CmdLog.debug("901 start_1"),status,exCmd.mkCheck(2),new CmdPlayPause(status)); // START - exit mode
+		jbm.map(0x0901,1,0,BOTH,CmdLog.debug("901 start_1"),status,exCmd.mkCheck(2),new CmdPlayPause(status)); // START - exit mode
 		jbm.map(0x0901,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("901 start_2"),status,new CmdPlayPause(status));
 
 		//

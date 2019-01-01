@@ -18,11 +18,11 @@ public class CmdVolume extends AbstractCmdMpd implements ButtonCommand
 	}
 	public boolean button(BState state)
 	{
-		Object volstring=state.get("volume");
+		String volstring=state.getString("volume");
 		if (volstring!=null)
 		{
 			try {
-				int vol=Integer.parseInt(volstring.toString());
+				int vol=Integer.parseInt(volstring);
 				vol += delta;
 				return sendCommand(state,"setvol "+vol);
 			}

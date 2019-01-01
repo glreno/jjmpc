@@ -1,5 +1,6 @@
 package com.rfacad.jjmpc;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -7,20 +8,31 @@ import com.rfacad.buttons.interfaces.BState;
 
 public class MockBState implements BState {
 
-	private Map<String,Object> map=new ConcurrentHashMap<>();
+	private Map<String,String> mapString=new ConcurrentHashMap<>();
+	private Map<String,List<String>> mapStringList=new ConcurrentHashMap<>();
 	
 	@Override
-	public void set(String key, Object value) {
-		map.put(key, value);
+	public void setString(String key, String value) {
+		mapString.put(key, value);
 	}
 
 	@Override
-	public Object get(String key) {
-		return map.get(key);
+	public String getString(String key) {
+		return mapString.get(key);
 	}
 
 	@Override
-	public String substitute(String s) {
+	public void setStringList(String key, List<String> value) {
+		mapStringList.put(key, value);
+	}
+
+	@Override
+	public List<String> getStringList(String key) {
+		return mapStringList.get(key);
+	}
+
+	@Override
+	public String substituteStrings(String s) {
 		return s;
 	}
 

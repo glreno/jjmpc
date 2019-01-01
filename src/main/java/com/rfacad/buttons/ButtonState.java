@@ -11,30 +11,40 @@ public class ButtonState implements BState
 	private short id;
 	private short prev;
 	private short value;
-	private Map<String,Object> map;
+	private Map<String,String> mapString;
+	private Map<String,List<String>> mapStringList;
 
 	public ButtonState(short id,short prev,short value) {
 		this.id=id;
 		this.prev=prev;
 		this.value=value;
-		this.map=new ConcurrentHashMap<>();
+		this.mapString=new ConcurrentHashMap<>();
+		this.mapStringList=new ConcurrentHashMap<>();
 	}
 	
 	/*pkg*/ ButtonState(ButtonState o) {
 		this.id=o.id;
 		this.prev=o.prev;
 		this.value=o.value;
-		this.map=new ConcurrentHashMap<>(o.map);
+		this.mapString=new ConcurrentHashMap<>(o.mapString);
+		this.mapStringList=new ConcurrentHashMap<>(o.mapStringList);
 	}
 
 	public short getButtonId() { return id;}
 	public short getPrevValue() { return prev;}
 	public short getNewValue() { return value;}
 
-	public void set(String key,Object value) { map.put(key,value);}
-	public Object get(String key) { return map.get(key);}
+	@Override
+	public void setString(String key,String value) { mapString.put(key,value);}
+	@Override
+	public String getString(String key) { return mapString.get(key);}
+	@Override
+	public void setStringList(String key,List<String> value) { mapStringList.put(key,value);}
+	@Override
+	public List<String> getStringList(String key) { return mapStringList.get(key);}
 
-	public String substitute(String s) {
+	@Override
+	public String substituteStrings(String s) {
 		int pct1=s.indexOf('%');
 		if ( pct1 >= 0 ) {
 			int pct2=s.indexOf('%',pct1+1);
@@ -43,7 +53,7 @@ public class ButtonState implements BState
 				StringBuilder ret=new StringBuilder();
 				ret.append(s.substring(0,pct1));
 				ret.append(lookup(s.substring(pct1+1,pct2)));
-				ret.append(substitute(s.substring(pct2+1)));
+				ret.append(substituteStrings(s.substring(pct2+1)));
 				return ret.toString();
 			}
 		}
@@ -54,7 +64,7 @@ public class ButtonState implements BState
 		String ret="";
 		if (s.length()==0) ret="%";
 		else {
-			Object o=get(s);
+			Object o=getString(s);
 			if ( o!=null ) ret=o.toString();
 		}
 		return ret;

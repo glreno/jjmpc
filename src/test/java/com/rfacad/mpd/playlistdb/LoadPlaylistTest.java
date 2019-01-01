@@ -3,7 +3,6 @@ package com.rfacad.mpd.playlistdb;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -136,7 +135,7 @@ public class LoadPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret = pldb.loadPlaylist(bs1, PLID1);
 		assertTrue(ret);
-		assertEquals(PLID1,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID1,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 		
 		List<String> sent = mpdc.getCommandsSent();
 		assertEquals(expected.length,sent.size());
@@ -176,7 +175,7 @@ public class LoadPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret = pldb.loadPlaylist(bs1, PLID1);
 		assertTrue(ret);
-		assertEquals(PLID1,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID1,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 		
 		List<String> sent = mpdc.getCommandsSent();
 		assertEquals(expected.length,sent.size());
@@ -220,7 +219,7 @@ public class LoadPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret = pldb.loadPlaylist(bs1, PLID1);
 		assertTrue(ret);
-		assertEquals(PLID1,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID1,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 		
 		List<String> sent = mpdc.getCommandsSent();
 		assertEquals(expected.length,sent.size());
@@ -266,7 +265,7 @@ public class LoadPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret = pldb.loadPlaylist(bs1, PLID1);
 		assertTrue(ret);
-		assertEquals(PLID1,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID1,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 		
 		List<String> sent = mpdc.getCommandsSent();
 		assertEquals(expected.length,sent.size());

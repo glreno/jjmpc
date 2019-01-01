@@ -91,8 +91,7 @@ public class PlaylistFolderTest {
 		assertEquals(PLID2,ret1.get(0));
 		assertEquals(PLID1,ret1.get(1));
 		
-		@SuppressWarnings("unchecked")
-		List<String> list1=(List<String>)bs1.get(CACHEKEY);
+		List<String> list1=bs1.getStringList(CACHEKEY);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(PLID2,list1.get(0));
@@ -106,8 +105,7 @@ public class PlaylistFolderTest {
 		assertEquals(PLID2,ret2.get(0));
 		assertEquals(PLID1,ret2.get(1));
 
-		@SuppressWarnings("unchecked")
-		List<String> list2=(List<String>)bs2.get(CACHEKEY);
+		List<String> list2=bs2.getStringList(CACHEKEY);
 		assertNotNull(list2);
 		assertEquals(2,list2.size());
 		assertEquals(PLID2,list2.get(0));
@@ -134,8 +132,7 @@ public class PlaylistFolderTest {
 		assertEquals(PLID2,ret1.get(0));
 		assertEquals(PLID1,ret1.get(1));
 
-		@SuppressWarnings("unchecked")
-		List<String> list1=(List<String>)bs1.get(CACHEKEY);
+		List<String> list1=bs1.getStringList(CACHEKEY);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(PLID2,list1.get(0));
@@ -156,8 +153,7 @@ public class PlaylistFolderTest {
 		assertEquals(PLID1,ret2.get(1));
 		assertEquals(PLID3,ret2.get(2));
 		
-		@SuppressWarnings("unchecked")
-		List<String> list2=(List<String>)bs2.get(CACHEKEY);
+		List<String> list2=bs2.getStringList(CACHEKEY);
 		assertNotNull(list2);
 		assertEquals(3,list2.size());
 		assertEquals(PLID2,list2.get(0));
@@ -172,8 +168,7 @@ public class PlaylistFolderTest {
 		assertEquals(PLID2,ret3.get(0));
 		assertEquals(PLID1,ret3.get(1));
 		
-		@SuppressWarnings("unchecked")
-		List<String> list3=(List<String>)bs1.get(CACHEKEY);
+		List<String> list3=bs1.getStringList(CACHEKEY);
 		assertNotNull(list3);
 		assertEquals(2,list3.size());
 		assertEquals(PLID2,list3.get(0));
@@ -201,8 +196,7 @@ public class PlaylistFolderTest {
 		assertEquals(PLID1,ret1.get(1));
 
 
-		@SuppressWarnings("unchecked")
-		List<String> list1=(List<String>)bs1.get(CACHEKEY);
+		List<String> list1=bs1.getStringList(CACHEKEY);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(PLID2,list1.get(0));
@@ -219,8 +213,7 @@ public class PlaylistFolderTest {
 		assertEquals(1,ret2.size());
 		assertEquals(PLID2,ret2.get(0));
 	
-		@SuppressWarnings("unchecked")
-		List<String> list2=(List<String>)bs2.get(CACHEKEY);
+		List<String> list2=bs2.getStringList(CACHEKEY);
 		assertNotNull(list2);
 		assertEquals(1,list2.size());
 		assertEquals(PLID2,list2.get(0));
@@ -233,8 +226,7 @@ public class PlaylistFolderTest {
 		assertEquals(PLID2,ret3.get(0));
 		assertEquals(PLID1,ret3.get(1));
 
-		@SuppressWarnings("unchecked")
-		List<String> list3=(List<String>)bs1.get(CACHEKEY);
+		List<String> list3=bs1.getStringList(CACHEKEY);
 		assertNotNull(list3);
 		assertEquals(2,list3.size());
 		assertEquals(PLID2,list3.get(0));

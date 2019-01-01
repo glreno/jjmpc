@@ -3,7 +3,6 @@ package com.rfacad.mpd.playlistdb;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,6 @@ public class PlaylistTest {
 	@Test
 	public void shouldNotListFilesInPlaylistWhenPlaylistIdHasNoDash()
 	{
-		List<String> response=new ArrayList<>();
 		BState bs=new MockBState();
 		List<String> ret1=pldb.listFiles(bs,"not a valid playlist name");
 		assertNull(ret1);
@@ -65,7 +63,6 @@ public class PlaylistTest {
 	@Test
 	public void shouldNotListFilesInPlaylistWhenPlaylistIdHasNoName()
 	{
-		List<String> response=new ArrayList<>();
 		BState bs=new MockBState();
 		List<String> ret1=pldb.listFiles(bs,"not a valid playlist name--");
 		assertNull(ret1);
@@ -74,7 +71,6 @@ public class PlaylistTest {
 	@Test
 	public void shouldNotListFilesInPlaylistWhenPlaylistidHasNoFolder()
 	{
-		List<String> response=new ArrayList<>();
 		BState bs=new MockBState();
 		List<String> ret1=pldb.listFiles(bs,"--not a valid playlist name");
 		assertNull(ret1);
@@ -118,7 +114,7 @@ public class PlaylistTest {
 		assertEquals(FNAME1,ret1.get(0));
 		assertEquals(FNAME2,ret1.get(1));
 		
-		List<String> list1=(List<String>)bs1.get(CACHEKEY1);
+		List<String> list1=bs1.getStringList(CACHEKEY1);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(FNAME1,list1.get(0));
@@ -132,7 +128,7 @@ public class PlaylistTest {
 		assertEquals(FNAME1,ret2.get(0));
 		assertEquals(FNAME2,ret2.get(1));
 
-		List<String> list2=(List<String>)bs2.get(CACHEKEY1);
+		List<String> list2=bs2.getStringList(CACHEKEY1);
 		assertNotNull(list2);
 		assertEquals(2,list2.size());
 		assertEquals(FNAME1,list2.get(0));
@@ -158,7 +154,7 @@ public class PlaylistTest {
 		assertEquals(FNAME1,ret1.get(0));
 		assertEquals(FNAME2,ret1.get(1));
 		
-		List<String> list1=(List<String>)bs1.get(CACHEKEY1);
+		List<String> list1=bs1.getStringList(CACHEKEY1);
 		assertNotNull(list1);
 		assertEquals(2,list1.size());
 		assertEquals(FNAME1,list1.get(0));
@@ -178,7 +174,7 @@ public class PlaylistTest {
 		assertEquals(FNAME2,ret2.get(1));
 		assertEquals(FNAME3,ret2.get(2));
 
-		List<String> list2=(List<String>)bs2.get(CACHEKEY1);
+		List<String> list2=bs2.getStringList(CACHEKEY1);
 		assertNotNull(list2);
 		assertEquals(3,list2.size());
 		assertEquals(FNAME1,list2.get(0));
@@ -188,7 +184,7 @@ public class PlaylistTest {
 
 		// but the cache is still in place, if you use bs1
 		// (this bit of design internal probably doesn't need to be unit tested)
-		List<String> list3=(List<String>)bs1.get(CACHEKEY1);
+		List<String> list3=bs1.getStringList(CACHEKEY1);
 		assertNotNull(list3);
 		assertEquals(2,list3.size());
 		assertEquals(FNAME1,list3.get(0));
@@ -216,7 +212,7 @@ public class PlaylistTest {
 		assertEquals(FNAME2,ret1.get(1));
 		assertEquals(FNAME3,ret1.get(2));
 
-		List<String> list1=(List<String>)bs1.get(CACHEKEY1);
+		List<String> list1=bs1.getStringList(CACHEKEY1);
 		assertNotNull(list1);
 		assertEquals(3,list1.size());
 		assertEquals(FNAME1,list1.get(0));
@@ -235,7 +231,7 @@ public class PlaylistTest {
 		assertEquals(FNAME1,ret2.get(0));
 		assertEquals(FNAME3,ret2.get(1));
 
-		List<String> list2=(List<String>)bs2.get(CACHEKEY1);
+		List<String> list2=bs2.getStringList(CACHEKEY1);
 		assertNotNull(list2);
 		assertEquals(2,list2.size());
 		assertEquals(FNAME1,list2.get(0));
@@ -244,7 +240,7 @@ public class PlaylistTest {
 
 		// but the cache is still in place, if you use bs1
 		// (this bit of design internal probably doesn't need to be unit tested)
-		List<String> list3=(List<String>)bs1.get(CACHEKEY1);
+		List<String> list3=bs1.getStringList(CACHEKEY1);
 		assertNotNull(list3);
 		assertEquals(3,list3.size());
 		assertEquals(FNAME1,list3.get(0));

@@ -16,6 +16,10 @@ public class JBMTest
 {
 	private static String APLAY="/usr/bin/aplay";
 	private static String PLUCK="/usr/lib/libreoffice/share/gallery/sounds/pluck.wav";
+	
+	private static String L="L";
+	private static String R="R";
+	private static String [] BOTH=new String[] { L, R };
 
 	private static int lastssc=0;
 	private static class SuperSecretCmd implements ButtonCommand {
@@ -67,17 +71,15 @@ public class JBMTest
 		jbm.map(0x0001,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog(Level.INFO,"X",true));
 		jbm.map(0x0001,1,0,ButtonMapper.NO_SHIFT,new CmdSh(false,APLAY,PLUCK));
 		jbm.map(0x0101,1,0,ButtonMapper.ANY_SHIFT_STATE,new CmdLog(Level.INFO,"A",true));
-		jbm.map(0x0201,1,0,(short)3,new CmdLog(Level.INFO,"B",true));
+		jbm.map(0x0201,1,0,BOTH,new CmdLog(Level.INFO,"B",true));
 		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog(Level.INFO,"Y",true));
 
 		// left
-		jbm.map(0x0401,0,1,ButtonMapper.ANY_SHIFT_STATE,
-			jbm.mkCmdShift(1)
-		);
-		jbm.map(0x0401,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(1));
+		jbm.map(0x0401,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(L));
+		jbm.map(0x0401,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(L));
 		// right
-		jbm.map(0x0501,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(2));
-		jbm.map(0x0501,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(2));
+		jbm.map(0x0501,0,1,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdShift(R));
+		jbm.map(0x0501,1,0,ButtonMapper.ANY_SHIFT_STATE,jbm.mkCmdUnshift(R));
 
 		// joystick LEFT
 		jbm.map(0x0002,ButtonMapper.NEGATIVE,0,ButtonMapper.ANY_SHIFT_STATE,new CmdSay("shift to the left"),new SuperSecretCmd(1));

@@ -22,19 +22,19 @@ public class TestBState
 		BState state=new ButtonState((short)1, (short)2, (short)3);
 		
 		String test0="%";
-		String s0 = state.substitute(test0);
+		String s0 = state.substituteStrings(test0);
 		assertEquals("%",s0);
 
 		String test1="%% This is a %% Test %%";
-		String s1 = state.substitute(test1);
+		String s1 = state.substituteStrings(test1);
 		assertEquals("% This is a % Test %",s1);
 		
 		String test2="100%";
-		String s2 = state.substitute(test2);
+		String s2 = state.substituteStrings(test2);
 		assertEquals("100%",s2);
 
 		String test3="%5";
-		String s3 = state.substitute(test3);
+		String s3 = state.substituteStrings(test3);
 		assertEquals("%5",s3);
 
 	}
@@ -43,7 +43,7 @@ public class TestBState
 	public void shouldHandleUnsetValue() {
 		BState state=new ButtonState((short)1, (short)2, (short)3);
 		String test="There is no %foo% value here";
-		String s = state.substitute(test);
+		String s = state.substituteStrings(test);
 		assertEquals("There is no  value here",s);
 	}
 
@@ -51,20 +51,20 @@ public class TestBState
 	public void shouldSubstituteValues() {
 		BState state=new ButtonState((short)1, (short)2, (short)3);
 		String test1="foo is %foo%, bar is %bar%.";
-		state.set("foo", "xyzzy");
-		state.set("bar", "quux");
-		String s1 = state.substitute(test1);
+		state.setString("foo", "xyzzy");
+		state.setString("bar", "quux");
+		String s1 = state.substituteStrings(test1);
 		assertEquals("foo is xyzzy, bar is quux.",s1);
 		
 		// Now change the values
-		state.set("foo", "ace");
-		state.set("bar", "deuce");
-		String s2 = state.substitute(test1);
+		state.setString("foo", "ace");
+		state.setString("bar", "deuce");
+		String s2 = state.substituteStrings(test1);
 		assertEquals("foo is ace, bar is deuce.",s2);
 		
 		// Check the ends
 		String test3="%bar%%foo%";
-		String s3 = state.substitute(test3);
+		String s3 = state.substituteStrings(test3);
 		assertEquals("deuceace",s3);
 	}
 

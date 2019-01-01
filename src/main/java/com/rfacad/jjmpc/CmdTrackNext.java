@@ -16,14 +16,14 @@ public class CmdTrackNext extends AbstractCmdMpd implements ButtonCommand
 	}
 	public boolean button(BState state)
 	{
-		Object playstate=state.get("state");
-		Object plistlenO=state.get("playlistlength");
-		Object elapsedO=state.get("elapsed");
+		String playstate=state.getString(CmdPlayPause.STATE);
+		String plistlenO=state.getString("playlistlength");
+		String elapsedO=state.getString("elapsed");
 		
 		int plistlen=0;
 		try {
 			if ( plistlenO != null)
-				plistlen=Integer.parseInt(plistlenO.toString());
+				plistlen=Integer.parseInt(plistlenO);
 		}
 		catch (NumberFormatException e)
 		{
@@ -32,7 +32,7 @@ public class CmdTrackNext extends AbstractCmdMpd implements ButtonCommand
 		double elapsed=0;
 		try {
 			if ( elapsedO != null )
-				elapsed=Double.parseDouble(elapsedO.toString());
+				elapsed=Double.parseDouble(elapsedO);
 		}
 		catch (NumberFormatException e)
 		{

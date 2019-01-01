@@ -138,13 +138,13 @@ public class CurrentPlaylistTest {
 	{
 		// press play
 		BState bs2=new MockBState();
-		bs2.set("state", "play");
-		bs2.set("songid", "16");
+		bs2.setString("state", "play");
+		bs2.setString("songid", "16");
 
 		// press pause
 		BState bs3=new MockBState();
-		bs3.set("state", "play");
-		bs3.set("songid", "16");
+		bs3.setString("state", "play");
+		bs3.setString("songid", "16");
 
 		// the DB is going to see 'songid 16',
 		// find out what the filename is from playlistinfo
@@ -169,12 +169,12 @@ public class CurrentPlaylistTest {
 	{
 		// press pause
 		BState bs2=new MockBState();
-		bs2.set("state", "pause");
-		bs2.set("songid", "16");
+		bs2.setString("state", "pause");
+		bs2.setString("songid", "16");
 
 		BState bs3=new MockBState();
-		bs3.set("state", "pause");
-		bs3.set("songid", "16");
+		bs3.setString("state", "pause");
+		bs3.setString("songid", "16");
 
 		
 		// the DB is going to see 'songid 16',
@@ -205,15 +205,15 @@ public class CurrentPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret1 = pldb.loadPlaylist(bs1, PLID1);
 		assertTrue(ret1);
-		assertEquals(PLID1,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID1,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press play
 		BState bs2=new MockBState();
-		bs2.set("state", "play");
-		bs2.set("songid", "16");
+		bs2.setString("state", "play");
+		bs2.setString("songid", "16");
 		BState bs3=new MockBState();
-		bs3.set("state", "play");
-		bs3.set("songid", "16");
+		bs3.setString("state", "play");
+		bs3.setString("songid", "16");
 		
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
@@ -233,15 +233,15 @@ public class CurrentPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret1 = pldb.loadPlaylist(bs1, PLID2);
 		assertTrue(ret1);
-		assertEquals(PLID2,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID2,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press play
 		BState bs2=new MockBState();
-		bs2.set("state", "play");
-		bs2.set("songid", "16");
+		bs2.setString("state", "play");
+		bs2.setString("songid", "16");
 		BState bs3=new MockBState();
-		bs3.set("state", "play");
-		bs3.set("songid", "16");
+		bs3.setString("state", "play");
+		bs3.setString("songid", "16");
 		
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
@@ -261,15 +261,15 @@ public class CurrentPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret1 = pldb.loadPlaylist(bs1, PLID3);
 		assertTrue(ret1);
-		assertEquals(PLID3,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID3,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press play
 		BState bs2=new MockBState();
-		bs2.set("state", "play");
-		bs2.set("songid", "16");
+		bs2.setString("state", "play");
+		bs2.setString("songid", "16");
 		BState bs3=new MockBState();
-		bs3.set("state", "play");
-		bs3.set("songid", "16");
+		bs3.setString("state", "play");
+		bs3.setString("songid", "16");
 		
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
@@ -289,15 +289,15 @@ public class CurrentPlaylistTest {
 		BState bs1=new MockBState();
 		boolean ret1 = pldb.loadPlaylist(bs1, PLID2);
 		assertTrue(ret1);
-		assertEquals(PLID2,bs1.get(PlaylistDBI.PLAYLIST_LOADED));
+		assertEquals(PLID2,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press pause
 		BState bs2=new MockBState();
-		bs2.set("state", "pause");
-		bs2.set("songid", "16");
+		bs2.setString("state", "pause");
+		bs2.setString("songid", "16");
 		BState bs3=new MockBState();
-		bs3.set("state", "pause");
-		bs3.set("songid", "16");
+		bs3.setString("state", "pause");
+		bs3.setString("songid", "16");
 		
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);

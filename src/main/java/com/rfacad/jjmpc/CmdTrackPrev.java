@@ -13,7 +13,6 @@ public class CmdTrackPrev extends CmdMpd implements ButtonCommand
 	}
 	public boolean button(BState state)
 	{
-		Object playstate=state.get("state");
 		return super.button(state);
 	}
 }
