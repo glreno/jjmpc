@@ -188,8 +188,18 @@ public class PlaylistDB implements PlaylistDBI {
 				if ( s.startsWith("file:"))
 				{
 					String fn=s.substring(5).trim();
-					boolean added=found.add(fn);
-					if (added) log.debug("Found file: {}",fn);
+					
+					// Reject all files except .mp3
+					int dot=fn.lastIndexOf('.');
+					if ( dot > 0 )
+					{
+						String ext=fn.substring(dot);
+						if ( ".mp3".equalsIgnoreCase(ext) )
+						{
+							boolean added=found.add(fn);
+							if (added) log.debug("Found file: {}",fn);
+						}
+					}
 				}
 			}
 			
@@ -328,7 +338,7 @@ public class PlaylistDB implements PlaylistDBI {
 			log.debug("Building playlist.");
 			RSMPDSyncCaller caller=new RSMPDSyncCaller(mpdc);
 			caller.send("update");
-			caller.send("clear \""+playlistid+"\"");
+			caller.send("playlistclear \""+playlistid+"\"");
 			
 			for(String fn : diskFilesFullPath)
 			{
