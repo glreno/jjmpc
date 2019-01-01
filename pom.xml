@@ -24,9 +24,9 @@ Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
 
 
 <properties>
-	<jdkVersion>1.7</jdkVersion>
-	<maven.compiler.source>1.7</maven.compiler.source>
-	<maven.compiler.target>1.7</maven.compiler.target>
+	<jdkVersion>1.8</jdkVersion>
+	<maven.compiler.source>1.8</maven.compiler.source>
+	<maven.compiler.target>1.8</maven.compiler.target>
 </properties>
 
 <dependencies>

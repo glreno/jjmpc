@@ -71,7 +71,7 @@ public class RidiculouslySimpleJoystickDriver
 	
 	protected void innerRun()
 	{
-		log.info("Joystick thread starting.");
+		log.debug("Joystick thread starting.");
 		while(keepgoing)
 		{
 			if ( pauseForRetry )
@@ -146,7 +146,7 @@ public class RidiculouslySimpleJoystickDriver
 				}
 				else
 				{
-					log.error("Error reading joystick, got "+read+" bytes");
+					log.error("Error reading joystick, got {} bytes",read);
 					return;
 				}
 			}
@@ -181,7 +181,7 @@ public class RidiculouslySimpleJoystickDriver
 	{
 		if ( log.isDebugEnabled() )
 		{
-			log.debug("Button pressed: "+hex(id)+" value="+hex(value));
+			log.debug("Button pressed: {} value={}",()->hex(id),()->hex(value));
 		}
 		
 		if ( cache == null )
@@ -224,14 +224,15 @@ public class RidiculouslySimpleJoystickDriver
 		else {
 			doCacheIt=true;
 		}
+		short prevd=prev; // guaranteed not null
 
 		if ( log.isDebugEnabled() )
 		{
-			log.debug("Button: "+hex(id)+" prev="+hex(prev)+" value="+hex(value));
+			log.debug("Button: {} prev={} value={}",()->hex(id),()->hex(prevd),()->hex(value));
 		}
 		if ( listener != null )
 		{
-			listener.button(id,prev,value);
+			listener.button(id,prevd,value);
 		}
 		
 		if ( doCacheIt )

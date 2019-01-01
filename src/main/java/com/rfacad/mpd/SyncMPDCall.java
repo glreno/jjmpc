@@ -69,7 +69,7 @@ public class SyncMPDCall implements Runnable
 			socket=new Socket(address,port);
 			out=new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 			in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			log.debug("Socket opened to "+address+" port "+port);
+			log.debug("Socket opened to {} : {}",address,port);
 			// First line is a welcome message of some kind
 			String s=in.readLine();
 			log.debug(s);
@@ -77,7 +77,7 @@ public class SyncMPDCall implements Runnable
 
 	public void shutdown()
 	{
-		log.info("Sync call received shutdown");
+		log.debug("Sync call received shutdown");
 		this.keepgoing=false;
 		closeSocket();
 	}
@@ -116,13 +116,13 @@ public class SyncMPDCall implements Runnable
 			if ( pauseForRetry > 0 )
 			{
 				try { Thread.sleep(1000);} catch (InterruptedException e) {
-					log.debug("Sleep interrupted");
+					log.trace("Sleep interrupted");
 				}
 			}
 			if ( in == null )
 			{
 				pauseForRetry++;
-				log.debug("wee paws");
+				log.trace("wee paws");
 			}
 			else
 			{
@@ -130,7 +130,7 @@ public class SyncMPDCall implements Runnable
 				String s;
 				try
 				{
-					log.debug("Waiting...");
+					log.trace("Waiting...");
 					while ( (s = in.readLine()) != null )
 					{
 						pauseForRetry=0;
@@ -151,15 +151,15 @@ public class SyncMPDCall implements Runnable
 					// Got a null from readLine(), but no exception
 					// After five seconds of pauses, close the socket
 					pauseForRetry++;
-					log.debug("wee paws {}",pauseForRetry);
+					log.trace("wee paws {}",pauseForRetry);
 					if ( pauseForRetry > 5 ) {
-						log.warn("Waited long enough, closing socket");
+						log.debug("Waited long enough, closing socket");
 						senderr("MPD timed out",response);
 						return;
 					}
 				}
 				catch (SocketException e) {
-					log.info("Caught socket exception {}",e.getMessage());
+					log.warn("Caught socket exception {}",e.getMessage());
 					if ("Socket closed".equals(e.getMessage())||"Connection reset".equals(e.getMessage())) {
 						log.debug("Socket closed");
 						response.add(e.getMessage());
@@ -174,12 +174,12 @@ public class SyncMPDCall implements Runnable
 					}
 				}
 				catch (IOException e) {
-					log.warn("IO Exception in MPD client",e);
+					log.error("IO Exception in MPD client",e);
 					response.add(e.getMessage());
 					senderr("Exception thrown",response);
 					return;
 				}
-				log.debug("Done waiting.");
+				log.trace("Done waiting.");
 			}
 		}
 	}

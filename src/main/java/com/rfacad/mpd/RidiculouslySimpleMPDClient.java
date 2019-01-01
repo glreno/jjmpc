@@ -44,7 +44,15 @@ public class RidiculouslySimpleMPDClient implements MPDCallDoneListener
 	
 	public void shutdown()
 	{
-		log.info("Shutting down executor, there are {} jobs",jobs.size());
+		int nj=jobs.size();
+		if ( nj > 0 )
+		{
+			log.warn("Shutting down executor, there are {} jobs",jobs.size());
+		}
+		else
+		{
+			log.debug("Shutting down executor");
+		}
 		// stop processing new jobs
 		executor.shutdown();
 		// Warn the jobs
