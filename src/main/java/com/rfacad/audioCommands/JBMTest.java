@@ -1,4 +1,4 @@
-package com.rfacad.jjmpc;
+package com.rfacad.audioCommands;
 
 import com.rfacad.buttons.BState;
 import com.rfacad.buttons.ButtonCommand;
@@ -6,6 +6,7 @@ import com.rfacad.buttons.CmdLog;
 import com.rfacad.buttons.CmdPause;
 import com.rfacad.buttons.CmdSh;
 import com.rfacad.buttons.mapper.ButtonMapper;
+import com.rfacad.joystick.CmdExitJoystickDriver;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
@@ -49,7 +50,7 @@ public class JBMTest
 		ButtonMapper jbm=new ButtonMapper();
 		jdriver.setListener(jbm);
 
-		CmdExit exit=new CmdExit(jdriver,null);
+		CmdExitJoystickDriver exitj=new CmdExitJoystickDriver(jdriver);
 		CmdLog log=new CmdLog();
 	
 		// on error, say oops
@@ -57,7 +58,7 @@ public class JBMTest
 
 
 		// Map most of the buttons
-		jbm.map(0x0109,1,0,ButtonMapper.ANY_SHIFT_STATE,exit);
+		jbm.map(0x0109,1,0,ButtonMapper.ANY_SHIFT_STATE,exitj);
 
 		jbm.map(0x0100,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,new CmdLog("X",true));
 		jbm.map(0x0100,1,0,ButtonMapper.NO_SHIFT,new CmdSh(false,APLAY,PLUCK));
@@ -89,7 +90,7 @@ public class JBMTest
 		// Main loop
 		jdriver.spawn();
 
-		exit.button(new BState((short)0,(short)0,(short)0));
+		exitj.button(new BState((short)0,(short)0,(short)0));
 	}
 }
 

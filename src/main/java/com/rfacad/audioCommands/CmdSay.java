@@ -1,4 +1,4 @@
-package com.rfacad.jjmpc;
+package com.rfacad.audioCommands;
 
 import com.rfacad.buttons.CmdSh;
 

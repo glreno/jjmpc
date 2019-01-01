@@ -3,11 +3,15 @@ package com.rfacad.jjmpc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.audioCommands.CmdSay;
+import com.rfacad.audioCommands.CmdSound;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.ChordCommand;
 import com.rfacad.buttons.CmdLog;
 import com.rfacad.buttons.mapper.ButtonMapper;
+import com.rfacad.joystick.CmdExitJoystickDriver;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
+import com.rfacad.mpd.CmdExitMpdDriver;
 import com.rfacad.mpd.RidiculouslySimpleMPDClient;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
@@ -19,7 +23,8 @@ public class JoystickMediaPlayerClient
 	private RidiculouslySimpleJoystickDriver jdriver;
 	private RidiculouslySimpleMPDClient mdriver;
 	private ButtonMapper jbm;
-	private CmdExit exit;
+	private CmdExitJoystickDriver exitj;
+	private CmdExitMpdDriver exitm;
 	private CmdMpdStatus status;
 
 	public static void main(String [] args) {
@@ -36,7 +41,8 @@ public class JoystickMediaPlayerClient
 		jbm=new ButtonMapper();
 		jdriver.setListener(jbm);
 		mdriver=new RidiculouslySimpleMPDClient("localhost",6600);
-		exit=new CmdExit(jdriver,mdriver);
+		exitj=new CmdExitJoystickDriver(jdriver);
+		exitm=new CmdExitMpdDriver(mdriver);
 		status=new CmdMpdStatus(mdriver);
 	}
 
@@ -77,7 +83,7 @@ public class JoystickMediaPlayerClient
 
 
 		// Exit command: Both shifts, select, and start
-		ChordCommand exCmd=new ChordCommand(3,new CmdLog("exiting"),exit);
+		ChordCommand exCmd=new ChordCommand(3,new CmdLog("exiting"),exitj,exitm);
 		jbm.map(0x0801,0,1,(short)3,exCmd.mkSet(1)); // SELECT - press
 		jbm.map(0x0901,0,1,(short)3,exCmd.mkSet(2)); // START - press
 		// the 'real' select & start commands will also call
