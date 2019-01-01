@@ -2,6 +2,9 @@ package com.rfacad.buttons.mapper;
 
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.ButtonState;
@@ -10,6 +13,8 @@ import com.rfacad.joystick.interfaces.RSJDListener;
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class ButtonMapper implements RSJDListener
 {
+	private static final Logger log = LogManager.getLogger(ButtonMapper.class);
+	
 	// Constants for generic button values.
 	public static Integer ZERO=0;
 	public static Integer NEGATIVE=0x10000;
@@ -50,6 +55,7 @@ public class ButtonMapper implements RSJDListener
 			if ( ! shifts.contains(flag) )
 			{
 				shifts.add(flag);
+				log.debug("Setting shift: "+shifts);
 			}
 			state.setStringList(BState.SHIFT,shifts);
 			return true;
@@ -60,6 +66,7 @@ public class ButtonMapper implements RSJDListener
 		CmdUnshift(String f) { flag=f;}
 		public boolean button(BState state) {
 			shifts.remove(flag);
+			log.debug("Setting shift: "+shifts);
 			state.setStringList(BState.SHIFT,shifts);
 			return true;
 		}
@@ -71,10 +78,13 @@ public class ButtonMapper implements RSJDListener
 		errHandler=null;
 	}
 
+	private static int TRACKER=0;
 	public void button(short id,short prev,short value)
 	{
+		int track=++TRACKER;
 		Integer iprev=(int)prev;
 		Integer inext=(int)value;
+		log.debug("{}: Button press: {} {} {}",track, Integer.toHexString(id), iprev, inext);
 		SortedMap<Integer,SortedMap<Integer,Map<String,List<ButtonCommand>>>> prevmap=mapping.get(id);
 		if ( prevmap==null ) return;
 
@@ -103,24 +113,38 @@ public class ButtonMapper implements RSJDListener
 		if ( shiftmap==null ) return;
 
 		String squash=squash(shifts);
+		log.debug("{}: Checking for shifts:",track,squash);
 		// Prefer an exact match. "No Shift" is an exact match of an empty string.
 		List<ButtonCommand> commands=shiftmap.get(squash);
+		if ( commands != null ) log.debug("Shift Match: found exact match for {}",squash);
+		
 		if (commands==null && ! shifts.isEmpty() ) {
 			// Next priority is the "at least one"
 			commands=shiftmap.get(AT_LEAST_ONE_SHIFT);
+			if ( commands != null ) log.debug("{}: Shift Match: found AT_LEAST_ONE for {}",track, squash);
 		}
 		if (commands==null) {
 			// Last priority is "any".
 			commands=shiftmap.get(ANY_SHIFT_STATE);
+			if ( commands != null ) log.debug("{}: Shift Match: going with ANY for {}",track,squash);
 		}
 		
 		// Execute the commands, if there are any
 		if ( commands != null )
 		{
+			if ( log.isDebugEnabled() )
+			{
+				log.debug("{}: Executing {} commands with shift state={}",track,commands.size(),squash);
+				for( ButtonCommand cmd : commands)
+				{
+					log.debug("\t{}",cmd.getDescription());
+				}
+			}
 			BState state=new ButtonState(id,prev,value);
 			state.setStringList(BState.SHIFT,shifts);
 			execute(commands,state);
 		}
+		log.debug("{}: Complete.", track);
 	}
 
 	public synchronized void map(int id,int prev,int value,String[] shiftstate,ButtonCommand ... cmd)
@@ -214,5 +238,24 @@ public class ButtonMapper implements RSJDListener
 
 	public CmdShift mkCmdShift(String f) { return new CmdShift(f);}
 	public CmdUnshift mkCmdUnshift(String f) { return new CmdUnshift(f);}
+	
+	private class CmdSetErrorHandler implements ButtonCommand
+	{
+		private ButtonCommand handlerToSet;
+		public CmdSetErrorHandler(ButtonCommand cmd)
+		{
+			handlerToSet=cmd;
+		}
+		@Override
+		public boolean button(BState state)
+		{
+			onError(handlerToSet);
+			return true;
+		}
+	}
+	public ButtonCommand mkCmdOnError(ButtonCommand errorHandler)
+	{
+		return new CmdSetErrorHandler(errorHandler);
+	}
 }
 

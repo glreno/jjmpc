@@ -17,6 +17,7 @@ public class TestButtonMapper
 {
 	private static final short S0=(short)0;
 	private static final short S1=(short)1;
+	private static final short S2=(short)2;
 	private static final String B0=ButtonMapper.NO_SHIFT;
 	private static final String B1="Button 1";
 	private static final String B2="Button 2";
@@ -47,7 +48,6 @@ public class TestButtonMapper
 		assertNotNull(ss1);
 		assertTrue(ss1.isEmpty());
 	}
-
 	
 	@Test
 	public void shouldCallErrorHandler()
@@ -60,6 +60,58 @@ public class TestButtonMapper
 		bm.button(S0,S1,S0);
 		c1.assertCalls(1);
 		c2.assertCalls(1);
+	}
+
+	@Test
+	public void shouldNotCallNoErrorHandler()
+	{
+		ButtonMapper bm=new ButtonMapper();
+		MockCmd c1=new MockCmd(false); // return false, indicating error
+		bm.map(0,1,0,B0,c1);
+		bm.onError(null);
+		bm.button(S0,S1,S0);
+		c1.assertCalls(1);
+	}
+
+	@Test
+	public void shouldChangeErrorHandler()
+	{
+		ButtonMapper bm=new ButtonMapper();
+		MockCmd c1=new MockCmd(false); // return false, indicating error
+		MockCmd c2=new MockCmd();
+		MockCmd c3=new MockCmd();
+		ButtonCommand handlerChanger1=bm.mkCmdOnError(c3);
+		ButtonCommand handlerChanger2=bm.mkCmdOnError(null);
+		
+		bm.map(0,1,0,B0,c1);
+		bm.map(1,1,0,B0,handlerChanger1);
+		bm.map(2,1,0,B0,handlerChanger2);
+		
+		// Initial state: call c2 on error
+		bm.onError(c2);
+		bm.button(S0,S1,S0);
+		c1.assertCalls(1);
+		c2.assertCalls(1);
+		c3.assertCalls(0);
+		
+		// Change state: set new error handler
+		bm.button(S1, S1, S0);
+		
+		// Trigger a second error, call c3
+		bm.button(S0,S1,S0);
+		c1.assertCalls(2);
+		c2.assertCalls(1);
+		c3.assertCalls(1);
+		
+		// Change state: set no error handler
+		bm.button(S2, S1, S0);
+
+		// Trigger a third error, call nothing
+		bm.button(S0,S1,S0);
+		c1.assertCalls(3);
+		c2.assertCalls(1);
+		c3.assertCalls(1);
+
 	}
 
 	

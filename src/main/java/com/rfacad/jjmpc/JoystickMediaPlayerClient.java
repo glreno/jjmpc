@@ -3,12 +3,18 @@ package com.rfacad.jjmpc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.License;
 import com.rfacad.audioCommands.CmdSay;
 import com.rfacad.audioCommands.CmdSound;
+import com.rfacad.buttons.BackgroundManager;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.buttons.ChordCommand;
+import com.rfacad.buttons.CmdBackground;
+import com.rfacad.buttons.CmdExitBackgrounManager;
 import com.rfacad.buttons.CmdLog;
 import com.rfacad.buttons.CmdPause;
+import com.rfacad.buttons.CmdSecondTime;
+import com.rfacad.buttons.CmdSh;
 import com.rfacad.buttons.mapper.ButtonMapper;
 import com.rfacad.joystick.CmdExitJoystickDriver;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
@@ -34,6 +40,10 @@ public class JoystickMediaPlayerClient
 	private CmdExitJoystickDriver exitj;
 	private CmdExitMpdDriver exitm;
 	private CmdMpdStatus status;
+
+	private CmdExitBackgrounManager exitb;
+
+	private BackgroundManager bm;
 
 	public static void main(String [] args) {
 		// Really should be getting this from a resource file
@@ -68,6 +78,7 @@ public class JoystickMediaPlayerClient
 			}
 		}
 		int portnum=Integer.parseInt(port);
+		log.info(License.LICENSE);
 		log.info("Starting up.");
 		JoystickMediaPlayerClient jjmpc = new JoystickMediaPlayerClient(device,host,portnum);
 		jjmpc.loadCommands();
@@ -80,10 +91,12 @@ public class JoystickMediaPlayerClient
 		jdriver=new RidiculouslySimpleJoystickDriver(device);
 		jbm=new ButtonMapper();
 		jdriver.setListener(jbm);
+		bm=new BackgroundManager();
 		mdriver=new RidiculouslySimpleMPDClient(host,port);
 		db=new PlaylistDB(mdriver);
 		exitj=new CmdExitJoystickDriver(jdriver);
 		exitm=new CmdExitMpdDriver(mdriver);
+		exitb=new CmdExitBackgrounManager(bm);
 		status=new CmdMpdStatus(mdriver);
 	}
 
@@ -126,7 +139,19 @@ public class JoystickMediaPlayerClient
 
 
 		// Exit command: Both shifts, select, and start
-		ChordCommand exCmd=new ChordCommand(3,CmdLog.info("exiting"),new CmdSay("bye"),new CmdPause(1000),exitj,exitm);
+		ChordCommand exCmd=new ChordCommand(3,
+				CmdLog.info("preparing to exit"),
+				jbm.mkCmdOnError(null),
+				new CmdSecondTime(
+					new CmdSay("shutting down"),
+					new CmdSh(false,"/usr/bin/sudo","/sbin/shutdown","-h","now")
+				),
+				new CmdBackground(bm,
+					new CmdSay("press again to shut down pi"),
+					new CmdPause(5000),
+					CmdLog.info("exiting"),
+					exitj,exitm,exitb
+				));
 		jbm.map(0x0801,0,1,BOTH,CmdLog.debug("801 select down"), exCmd.mkSet(1)); // SELECT - press
 		jbm.map(0x0901,0,1,BOTH,CmdLog.debug("901 start down"), exCmd.mkSet(2)); // START - press
 		// the 'real' select & start commands will also call
@@ -137,15 +162,17 @@ public class JoystickMediaPlayerClient
 		// Select - change play mode (maybe exit)
 		// (Modes are track-once and playlist-once)
 		//
-		jbm.map(0x0801,1,0,BOTH,exCmd.mkCheck(1),CmdLog.debug("801 select_1"),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
-		jbm.map(0x0801,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("801 select_2"),status,new CmdPlayMode(status),new CmdSay("%mode% mode")); // SELECT - exit mode
+		jbm.map(0x0801,1,0,BOTH,CmdLog.debug("801 select_1"),exCmd.mkCheck(1)); // SELECT - exit mode
+		jbm.map(0x0801,1,0,L,CmdLog.debug("801 select_2"),status,new CmdPlayMode(status),new CmdSay("%mode% mode"));
+		jbm.map(0x0801,1,0,R,CmdLog.debug("801 select_3"),status,new CmdPlayMode(status),new CmdSay("%mode% mode"));
 
 		//
 		// Start - play/pause (maybe exit)
 		// The 'play' command starts the next track, if the last one ended.
 		//
-		jbm.map(0x0901,1,0,BOTH,CmdLog.debug("901 start_1"),status,exCmd.mkCheck(2),new CmdPlayPause(status)); // START - exit mode
-		jbm.map(0x0901,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("901 start_2"),status,new CmdPlayPause(status));
+		jbm.map(0x0901,1,0,BOTH,CmdLog.debug("901 start_1"),exCmd.mkCheck(2)); // START - exit mode
+		jbm.map(0x0901,1,0,L,CmdLog.debug("901 start_2"),status,new CmdPlayPause(status));
+		jbm.map(0x0901,1,0,R,CmdLog.debug("901 start_3"),status,new CmdPlayPause(status));
 
 		//
 		// DPad Vert - volume up & down

@@ -22,7 +22,7 @@ public class CmdExitJoystickDriver implements ButtonCommand
 	{
 		log.info("Shutting down.");
 		if (joystickDriver!=null) {
-			log.debug("Shutting down joystick driver thread");
+			log.info("Shutting down joystick driver thread");
 			joystickDriver.shutdown();
 		}
 		return true;
