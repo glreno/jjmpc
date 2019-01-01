@@ -23,16 +23,16 @@ public class TestCmdTrackNext
 			FOLDERS[0]+PlaylistDBI.SEP+"playlist 01"
 	};
 	public static String [] DIRS0 = {
-			FOLDERS[0]+"/"+"playlist 00",
-			FOLDERS[0]+"/"+"playlist 01"
+			FOLDERS[0]+"/"+"playlist 00"+"/",
+			FOLDERS[0]+"/"+"playlist 01"+"/"
 	};
 	public static String [] PLAYLISTS1 = {
 			FOLDERS[1]+PlaylistDBI.SEP+"playlist 10",
 			FOLDERS[1]+PlaylistDBI.SEP+"playlist 11"
 	};
 	public static String [] DIRS1 = {
-			FOLDERS[1]+"/"+"playlist 10",
-			FOLDERS[1]+"/"+"playlist 11"
+			FOLDERS[1]+"/"+"playlist 10"+"/",
+			FOLDERS[1]+"/"+"playlist 11"+"/"
 	};
 	public static String [] FILES00 = { "file 01.mp3", "file 02.mp3", "file 03.mp3"};
 	public static String [] FILES01 = { "file 04.mp3", "file 05.mp3", "file 06.mp3"};
@@ -90,12 +90,12 @@ public class TestCmdTrackNext
 	}
 	
 	// "Next" commands:
-	//	state   elapsed playlistlength
+	//	state   elapsed playlistlength (remaining tracks in playlist)
 	//
-	//	play    ?       0       "stop", load next, "play" (1. we are playing last track)
-	//	pause   0       0       "play" (2. we are paused after finishing the penultimate track)
-	//	pause   +       0       "stop", load next, "play" (3. we are paused on last track)
-	//	stop    ?       0       load next, "play" (4. Startup or after playlist)
+	//	play    ?       0,1     "stop", load next, "play" (1. we are playing last track)
+	//	pause   0       0,1     "play" (2. we are paused after finishing the penultimate track)
+	//	pause   +       0,1     "stop", load next, "play" (3. we are paused on last track)
+	//	stop    ?       0,1     load next, "play" (4. Startup or after playlist)
 	//
 	//	play    ?       +       "next" (5. we are playing a track)
 	//	pause   0       +       "play" (6. we are paused having finished a track)
@@ -105,13 +105,14 @@ public class TestCmdTrackNext
 	@Test
 	public void shouldStartNextPlaylistDuringLastTrack()
 	{
-		// Status: state: play, playlistlength: 0, elapsed: any
+		// Status: state: play, playlistlength: 1, elapsed: any
 		// 1. While playing the last track in a playlist, start the next playlist ( "stop", load next playlist, "play")
 		BState bs=loadPlaylistState();
-		setStatus(bs,"play",0,"7.013");
+		setStatus(bs,"play",1,"7.013");
 		db.setMostRecentPlaylist(bs, PLAYLISTS0[0]);
-		String load="loadplaylist \""+PLAYLISTS0[1]+"\"";
+		String load="load \""+PLAYLISTS0[1]+"\"";
 		driver.expectOkRequest("stop");
+		driver.expectOkRequest("clear");
 		driver.expectOkRequest(load);
 		driver.expectOkRequest("play");
 		
@@ -119,14 +120,56 @@ public class TestCmdTrackNext
 		assertTrue(ok);
 		
 		List<String> sent = driver.getCommandsSent();
-		assertEquals(3,sent.size());
+		assertEquals(4,sent.size());
 		assertEquals("stop",sent.get(0));
-		assertEquals(load,sent.get(1));
-		assertEquals("play",sent.get(2));
+		assertEquals("clear",sent.get(1));
+		assertEquals(load,sent.get(2));
+		assertEquals("play",sent.get(3));
+	}
+	@Test
+	public void shouldStartNextPlaylistOnStartup()
+	{
+		// Status: state: play, playlistlength: 0, elapsed: any
+		// 1. While playing the last track in a playlist, start the next playlist ( "stop", load next playlist, "play")
+		BState bs=loadPlaylistState();
+		setStatus(bs,"play",0,"7.013");
+		db.setMostRecentPlaylist(bs, PLAYLISTS0[0]);
+		String load="load \""+PLAYLISTS0[1]+"\"";
+		driver.expectOkRequest("stop");
+		driver.expectOkRequest("clear");
+		driver.expectOkRequest(load);
+		driver.expectOkRequest("play");
+		
+		boolean ok=nextcmd.button(bs);
+		assertTrue(ok);
+		
+		List<String> sent = driver.getCommandsSent();
+		assertEquals(4,sent.size());
+		assertEquals("stop",sent.get(0));
+		assertEquals("clear",sent.get(1));
+		assertEquals(load,sent.get(2));
+		assertEquals("play",sent.get(3));
 	}
 	
 	@Test
 	public void shouldStartNextTrackAfterPenultimateTrack()
+	{
+		// Status: state: pause, playlistlength: 1, elapsed: 0
+		// 2. After playing the penultimate track in a playlist, play the last track ( "play" )
+		BState bs=loadPlaylistState();
+		setStatus(bs,"pause",1,"0.000");
+		driver.expectOkRequest("play");
+		
+		boolean ok=nextcmd.button(bs);
+		assertTrue(ok);
+		
+		List<String> sent = driver.getCommandsSent();
+		assertEquals(1,sent.size());
+		assertEquals("play",sent.get(0));
+	}
+
+	@Test
+	public void shouldStartNextTrackOnStartup()
 	{
 		// Status: state: pause, playlistlength: 0, elapsed: 0
 		// 2. After playing the penultimate track in a playlist, play the last track ( "play" )
@@ -141,16 +184,67 @@ public class TestCmdTrackNext
 		assertEquals(1,sent.size());
 		assertEquals("play",sent.get(0));
 	}
+
 	@Test
 	public void shouldStartNextPlaylistWhenPausedDuringLastTrack()
 	{
-		// Status: state: pause, playlistlength: 0, elapsed: >0
+		// Status: state: pause, playlistlength: 1, elapsed: >0
 		// 3. While playing the last track in a playlist, start the next playlist ( "stop", load next playlist, "play")
 		BState bs=loadPlaylistState();
-		setStatus(bs,"pause",0,"7.013");
+		setStatus(bs,"pause",1,"7.013");
 		db.setMostRecentPlaylist(bs, PLAYLISTS0[0]);
-		String load="loadplaylist \""+PLAYLISTS0[1]+"\"";
+		String load="load \""+PLAYLISTS0[1]+"\"";
 		driver.expectOkRequest("stop");
+		driver.expectOkRequest("clear");
+		driver.expectOkRequest(load);
+		driver.expectOkRequest("play");
+		
+		boolean ok=nextcmd.button(bs);
+		assertTrue(ok);
+		
+		List<String> sent = driver.getCommandsSent();
+		assertEquals(4,sent.size());
+		assertEquals("stop",sent.get(0));
+		assertEquals("clear",sent.get(1));
+		assertEquals(load,sent.get(2));
+		assertEquals("play",sent.get(3));
+	}
+	@Test
+	public void shouldStartNextPlaylistWhenPausedOnStartup()
+	{
+		// Status: state: pause, playlistlength: 0, elapsed: >0
+		// 3. While playing the last track in a playlist, start the next playlist ( "stop", load next playlist, "play")
+		// (This is an impossible scenario)
+		BState bs=loadPlaylistState();
+		setStatus(bs,"pause",1,"7.013");
+		db.setMostRecentPlaylist(bs, PLAYLISTS0[0]);
+		String load="load \""+PLAYLISTS0[1]+"\"";
+		driver.expectOkRequest("stop");
+		driver.expectOkRequest("clear");
+		driver.expectOkRequest(load);
+		driver.expectOkRequest("play");
+		
+		boolean ok=nextcmd.button(bs);
+		assertTrue(ok);
+		
+		List<String> sent = driver.getCommandsSent();
+		assertEquals(4,sent.size());
+		assertEquals("stop",sent.get(0));
+		assertEquals("clear",sent.get(1));
+		assertEquals(load,sent.get(2));
+		assertEquals("play",sent.get(3));
+	}
+
+	@Test
+	public void shouldStartNextPlaylistAfterLastTrack()
+	{
+		// 4a. When stopped after playing the last track in a playlist, start the next playlist ( load next playlist, "play")
+		// Status: state: stop, playlistlength: 1, elapsed:any, there is a current playlist
+		BState bs=loadPlaylistState();
+		setStatus(bs,"stop",1,null);
+		db.setMostRecentPlaylist(bs, PLAYLISTS0[0]);
+		driver.expectOkRequest("clear");
+		String load="load \""+PLAYLISTS0[1]+"\"";
 		driver.expectOkRequest(load);
 		driver.expectOkRequest("play");
 		
@@ -159,30 +253,9 @@ public class TestCmdTrackNext
 		
 		List<String> sent = driver.getCommandsSent();
 		assertEquals(3,sent.size());
-		assertEquals("stop",sent.get(0));
+		assertEquals("clear",sent.get(0));
 		assertEquals(load,sent.get(1));
 		assertEquals("play",sent.get(2));
-	}
-
-	@Test
-	public void shouldStartNextPlaylistAfterLastTrack()
-	{
-		// 4a. When stopped after playing the last track in a playlist, start the next playlist ( load next playlist, "play")
-		// Status: state: stop, playlistlength: 0, elapsed:any, there is a current playlist
-		BState bs=loadPlaylistState();
-		setStatus(bs,"stop",0,null);
-		db.setMostRecentPlaylist(bs, PLAYLISTS0[0]);
-		String load="loadplaylist \""+PLAYLISTS0[1]+"\"";
-		driver.expectOkRequest(load);
-		driver.expectOkRequest("play");
-		
-		boolean ok=nextcmd.button(bs);
-		assertTrue(ok);
-		
-		List<String> sent = driver.getCommandsSent();
-		assertEquals(2,sent.size());
-		assertEquals(load,sent.get(0));
-		assertEquals("play",sent.get(1));
 	}
 
 	@Test
@@ -192,17 +265,19 @@ public class TestCmdTrackNext
 		// Status: state: stop, playlistlength: 0, elapsed:any, there is no current playlist
 		BState bs=loadPlaylistState();
 		setStatus(bs,"stop",0,null);
-		String load="loadplaylist \""+PLAYLISTS0[0]+"\"";
-		driver.expectOkRequest(load);
+		driver.expectOkRequest("clear");
 		driver.expectOkRequest("play");
+		String load="load \""+PLAYLISTS0[0]+"\"";
+		driver.expectOkRequest(load);
 		
 		boolean ok=nextcmd.button(bs);
 		assertTrue(ok);
 		
 		List<String> sent = driver.getCommandsSent();
-		assertEquals(2,sent.size());
-		assertEquals(load,sent.get(0));
-		assertEquals("play",sent.get(1));
+		assertEquals(3,sent.size());
+		assertEquals("clear",sent.get(0));
+		assertEquals(load,sent.get(1));
+		assertEquals("play",sent.get(2));
 	}
 
 
@@ -210,7 +285,7 @@ public class TestCmdTrackNext
 	public void shouldStartNextTrackInPlaylistWhilePlaying()
 	{
 		// 5. While playing a track in a playlist, start the next track ("next")
-		// Status: state: play, playlistlength: >0, elapsed: any
+		// Status: state: play, playlistlength: >1, elapsed: any
 		BState bs=loadPlaylistState();
 		setStatus(bs,"play",2,"7.013");
 		driver.expectOkRequest("next");
@@ -227,7 +302,7 @@ public class TestCmdTrackNext
 	public void shouldStartNextTrackAfterTrack()
 	{
 		// 6. When stopped after playing a track in a playlist, start the next track ("play" -- it'll be the first track in the loaded playlist)
-		// Status: state: pause, playlistlength: >0, elapsed: 0
+		// Status: state: pause, playlistlength: >1, elapsed: 0
 		BState bs=loadPlaylistState();
 		setStatus(bs,"pause",2,"0.000");
 		driver.expectOkRequest("play");
@@ -244,7 +319,7 @@ public class TestCmdTrackNext
 	public void shouldStartNextTrackInPlaylistWhilePaused()
 	{
 		// 7. While paused on a track in a playlist, start the next track ("next" is sufficient)
-		// Status: state: pause, playlistlength: >0, elapsed: >0
+		// Status: state: pause, playlistlength: >1, elapsed: >0
 		BState bs=loadPlaylistState();
 		setStatus(bs,"pause",2,"7.013");
 		driver.expectOkRequest("next");
@@ -261,7 +336,7 @@ public class TestCmdTrackNext
 	public void shouldStartCurrentTrackAfterStop()
 	{
 		// 8. When stopped while playing a track in a playlist, start the next track ("play" "next" )
-		// Status: state: stop, playlistlength: >0, elapsed: any
+		// Status: state: stop, playlistlength: >1, elapsed: any
 		BState bs=loadPlaylistState();
 		setStatus(bs,"stop",2,null);
 		driver.expectOkRequest("play");

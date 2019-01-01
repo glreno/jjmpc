@@ -419,6 +419,47 @@ public class PlaylistDB implements PlaylistDBI {
 		}
 		return null;
 	}
+
+	@Override
+	public String getPrevPlaylist(BState bs)
+	{
+		String curr=getMostRecentPlaylist(bs);
+		if ( curr==null )
+		{
+			return null;
+		}
+
+		// Get the list of playlists in this folder
+		int sep=curr.indexOf(SEP);
+		String folder=curr.substring(0,sep);
+		List<String> playlistsInCurrFolder = listPlaylists(bs, folder);
+		for(int i=1;i<playlistsInCurrFolder.size();i++)
+		{
+			if ( curr.equals(playlistsInCurrFolder.get(i)))
+			{
+				// found it, return the prev folder.
+				return playlistsInCurrFolder.get(i-1);
+			}
+		}
+		// curr is either the first playlist in the folder, or it's not there at all.
+		// So go to prev folder.
+		
+		List<String> folders = listPlaylistFolders(bs);
+		for(int i=1;i<folders.size();i++)
+		{
+			if ( folder.equals(folders.get(i)))
+			{
+				// found it. Return last playlist in the prev folder.
+				List<String> playlistsInPrevFolder = listPlaylists(bs, folders.get(i-1));
+				if ( playlistsInPrevFolder != null && !playlistsInPrevFolder.isEmpty() )
+				{
+					return playlistsInPrevFolder.get(playlistsInPrevFolder.size()-1);
+				}
+			}
+		}
+		// curr folder is the first one, or does not exist!
+		return null;
+	}
 	
 	@Override
 	public String getNextPlaylist(BState bs)

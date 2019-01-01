@@ -57,4 +57,9 @@ public interface PlaylistDBI {
 	 */
 	String getNextPlaylist(BState bs);
 
+	/**
+	 * @return ID of the playlist BEFORE the most recently loaded playlist; if nothing loaded, then return null.
+	 */
+	String getPrevPlaylist(BState bs);
+
 }

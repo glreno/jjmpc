@@ -14,6 +14,7 @@ import com.rfacad.joystick.CmdExitJoystickDriver;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
 import com.rfacad.mpd.CmdExitMpdDriver;
 import com.rfacad.mpd.RidiculouslySimpleMPDClient;
+import com.rfacad.mpd.interfaces.PlaylistDBI;
 import com.rfacad.mpd.playlistdb.PlaylistDB;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
@@ -159,11 +160,13 @@ public class JoystickMediaPlayerClient
 		//
 		// Y/A - track next/prev
 		//
-		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("301 Y track prev"),status, new CmdTrackPrev(status)); // Y
-		jbm.map(0x0101,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("101 A track prev"),status, new CmdTrackNext(status,db)); // Y
+		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("301 Y track prev"),status, new CmdTrackPrev(status,db)); // Y
+		jbm.map(0x0101,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("101 A track next"),status, new CmdTrackNext(status,db)); // A
 
 		
 		// X/B - playlist next/prev (announce name)
+		jbm.map(0x0001,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("001 X playlist next"),status, new CmdPlaylistNext(status,db), new CmdMpd(status,"pause"), new CmdSay("Next %"+PlaylistDBI.PLAYLIST_LOADED+"%"), new CmdPause(5000), new CmdMpd(status,"play")); // X
+		jbm.map(0x0201,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("201 B playlist prev"),status, new CmdPlaylistPrev(status,db), new CmdMpd(status,"pause"), new CmdSay("Previous %"+PlaylistDBI.PLAYLIST_LOADED+"%"), new CmdPause(5000), new CmdMpd(status,"play")); // B
 		
 		
 		// Buttons from test program

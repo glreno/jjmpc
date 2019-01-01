@@ -43,10 +43,10 @@ public class CmdTrackNext extends AbstractCmdMpd implements ButtonCommand
 		// "Next" commands:
 		//	state   elapsed playlistlength
 		//
-		//	play    ?       0    X   "stop", load next, "play" (1. we are playing last track)
-		//	pause   0       0    X   "play" (2. we are paused after finishing the penultimate track)
-		//	pause   +       0       "stop", load next, "play" (3. we are paused on last track)
-		//	stop    ?       0    X   load first|next, "play" (4. Startup or after playlist)
+		//	play    ?       0,1  X   "stop", load next, "play" (1. we are playing last track)
+		//	pause   0       0,1  X   "play" (2. we are paused after finishing the penultimate track)
+		//	pause   +       0,1  X   "stop", load next, "play" (3. we are paused on last track)
+		//	stop    ?       0,1  X   load first|next, "play" (4. Startup or after playlist)
 		//
 		//	play    ?       +    X   "next" (5. we are playing a track)
 		//	pause   0       +    X   "play" (6. we are paused having finished a track)
@@ -55,44 +55,55 @@ public class CmdTrackNext extends AbstractCmdMpd implements ButtonCommand
 		
 		if ("play".equals(playstate))
 		{
-			if ( plistlen>0 )
+			if ( plistlen>1 )
 			{
 				return sendCommand(state, "next"); // case 5
 			}
 			else
 			{
-				String playlistname=db.getNextPlaylist(state);
-				return sendCommands(state,"stop", "loadplaylist \""+playlistname+"\"","play"); // case 1
+				String playlistid=db.getNextPlaylist(state);
+				sendCommand(state, "stop");
+				if (db.loadPlaylist(state, playlistid))
+				{
+					return sendCommand(state, "play"); // case 1
+				}
 			}
 		}
 		else if ("pause".equals(playstate))
 		{
-			if ( elapsed<0.001 && plistlen==0 )
+			if ( elapsed<0.001 && plistlen<2 )
 			{
 				return sendCommand(state, "play"); // case 2
 			}
-			else if ( elapsed<0.001 && plistlen>0 )
+			else if ( elapsed<0.001 && plistlen>1 )
 			{
 				return sendCommand(state, "play"); // case 6
 			}
-			else if ( elapsed>0 && plistlen>0 )
+			else if ( elapsed>0 && plistlen>1 )
 			{
 				return sendCommand(state, "next"); // case 7
 			}
-			else if ( elapsed>0 && plistlen==0 )
+			else if ( elapsed>0 && plistlen<2 )
 			{
-				String playlistname=db.getNextPlaylist(state);
-				return sendCommands(state,"stop", "loadplaylist \""+playlistname+"\"","play"); // case 3
+				String playlistid=db.getNextPlaylist(state);
+				sendCommand(state, "stop");
+				if (db.loadPlaylist(state, playlistid))
+				{
+					return sendCommand(state, "play"); // case 3
+				}
 			}
 		}
 		else if ("stop".equals(playstate))
 		{
-			if ( plistlen>0 )
+			if ( plistlen>1 )
 			{
 				return sendCommands(state, "play", "next"); // case 8
 			}
-			String playlistname=db.getNextPlaylist(state);
-			return sendCommands(state,"loadplaylist \""+playlistname+"\"","play"); // case 4
+			String playlistid=db.getNextPlaylist(state);
+			if (db.loadPlaylist(state, playlistid))
+			{
+				return sendCommand(state, "play"); // case 4
+			}
 		}
 		
 		return false;

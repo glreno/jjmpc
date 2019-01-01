@@ -124,6 +124,10 @@ public class CurrentPlaylistTest {
 	@Test
 	public void shouldReturnNullOnStartup()
 	{
+		BState bs0=new MockBState();
+		String ret0 = pldb.getPrevPlaylist(bs0);
+		assertNull(ret0);
+
 		BState bs1=new MockBState();
 		String ret1 = pldb.getMostRecentPlaylist(bs1);
 		assertNull(ret1);
@@ -137,11 +141,12 @@ public class CurrentPlaylistTest {
 	public void shouldReturnCurrentPlaylistWhenPlayingAfterStartup()
 	{
 		// press play
+		BState bs0=new MockBState();
+		bs0.setString("state", "play");
+		bs0.setString("songid", "16");
 		BState bs2=new MockBState();
 		bs2.setString("state", "play");
 		bs2.setString("songid", "16");
-
-		// press pause
 		BState bs3=new MockBState();
 		bs3.setString("state", "play");
 		bs3.setString("songid", "16");
@@ -155,6 +160,10 @@ public class CurrentPlaylistTest {
 		response2_2.add(F+DIR2+"/"+FNAME2_3); response2_2.add(T); response2_2.add(I+"17");
 		mpdc.expectOkRequest(CMD_PLAYLISTINFO, response2_2);
 		
+		// check previous playlist
+		String ret0 = pldb.getPrevPlaylist(bs0);
+		assertEquals(PLID1,ret0);
+
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
 		assertEquals(PLID2,ret2);
@@ -168,10 +177,12 @@ public class CurrentPlaylistTest {
 	public void shouldReturnCurrentPlaylistWhenPausedAfterStartup()
 	{
 		// press pause
+		BState bs0=new MockBState();
+		bs0.setString("state", "pause");
+		bs0.setString("songid", "16");
 		BState bs2=new MockBState();
 		bs2.setString("state", "pause");
 		bs2.setString("songid", "16");
-
 		BState bs3=new MockBState();
 		bs3.setString("state", "pause");
 		bs3.setString("songid", "16");
@@ -185,6 +196,10 @@ public class CurrentPlaylistTest {
 		response2_2.add(F+DIR2+"/"+FNAME2_2); response2_2.add(T); response2_2.add(I+"16");
 		response2_2.add(F+DIR2+"/"+FNAME2_3); response2_2.add(T); response2_2.add(I+"17");
 		mpdc.expectOkRequest(CMD_PLAYLISTINFO, response2_2);
+
+		// check previous playlist
+		String ret0 = pldb.getPrevPlaylist(bs0);
+		assertEquals(PLID1,ret0);
 
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
@@ -208,6 +223,9 @@ public class CurrentPlaylistTest {
 		assertEquals(PLID1,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press play
+		BState bs0=new MockBState();
+		bs0.setString("state", "play");
+		bs0.setString("songid", "16");
 		BState bs2=new MockBState();
 		bs2.setString("state", "play");
 		bs2.setString("songid", "16");
@@ -215,6 +233,10 @@ public class CurrentPlaylistTest {
 		bs3.setString("state", "play");
 		bs3.setString("songid", "16");
 		
+		// check previous playlist
+		String ret0 = pldb.getPrevPlaylist(bs0);
+		assertNull(ret0);
+
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
 		assertEquals(PLID1,ret2);
@@ -236,6 +258,9 @@ public class CurrentPlaylistTest {
 		assertEquals(PLID2,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press play
+		BState bs0=new MockBState();
+		bs0.setString("state", "play");
+		bs0.setString("songid", "16");
 		BState bs2=new MockBState();
 		bs2.setString("state", "play");
 		bs2.setString("songid", "16");
@@ -243,6 +268,10 @@ public class CurrentPlaylistTest {
 		bs3.setString("state", "play");
 		bs3.setString("songid", "16");
 		
+		// check previous playlist
+		String ret0 = pldb.getPrevPlaylist(bs0);
+		assertEquals(PLID1,ret0);
+
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
 		assertEquals(PLID2,ret2);
@@ -264,6 +293,9 @@ public class CurrentPlaylistTest {
 		assertEquals(PLID3,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press play
+		BState bs0=new MockBState();
+		bs0.setString("state", "play");
+		bs0.setString("songid", "16");
 		BState bs2=new MockBState();
 		bs2.setString("state", "play");
 		bs2.setString("songid", "16");
@@ -271,6 +303,10 @@ public class CurrentPlaylistTest {
 		bs3.setString("state", "play");
 		bs3.setString("songid", "16");
 		
+		// check previous playlist
+		String ret0 = pldb.getPrevPlaylist(bs0);
+		assertEquals(PLID2,ret0);
+
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
 		assertEquals(PLID3,ret2);
@@ -292,6 +328,9 @@ public class CurrentPlaylistTest {
 		assertEquals(PLID2,bs1.getString(PlaylistDBI.PLAYLIST_LOADED));
 
 		// press pause
+		BState bs0=new MockBState();
+		bs0.setString("state", "pause");
+		bs0.setString("songid", "16");
 		BState bs2=new MockBState();
 		bs2.setString("state", "pause");
 		bs2.setString("songid", "16");
@@ -299,6 +338,10 @@ public class CurrentPlaylistTest {
 		bs3.setString("state", "pause");
 		bs3.setString("songid", "16");
 		
+		// check previous playlist
+		String ret0 = pldb.getPrevPlaylist(bs0);
+		assertEquals(PLID1,ret0);
+
 		// check current playlist
 		String ret2 = pldb.getMostRecentPlaylist(bs2);
 		assertEquals(PLID2,ret2);
