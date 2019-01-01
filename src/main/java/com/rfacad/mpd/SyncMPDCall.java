@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -90,6 +91,13 @@ public class SyncMPDCall implements Runnable
 		{
 				openSocket();
 				sendCommand();
+		}
+		catch (Exception e)
+		{
+			log.error("Uncaught exception in MPD client",e);
+		}
+		try
+		{
 				mainloop();
 		}
 		catch (Exception e)
@@ -123,6 +131,11 @@ public class SyncMPDCall implements Runnable
 			{
 				pauseForRetry++;
 				log.trace("wee paws");
+				if ( pauseForRetry > 5 ) {
+					log.debug("Waited long enough, unable to open socket");
+					senderr("MPD could not be contacted",Collections.emptyList());
+					return;
+				}
 			}
 			else
 			{

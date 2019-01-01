@@ -11,9 +11,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.rfacad.mpd.SyncMPDCall.MPDCallDoneListener;
 import com.rfacad.mpd.interfaces.RSMPDListener;
+import com.rfacad.mpd.interfaces.RidiculouslySimpleMPDClientI;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class RidiculouslySimpleMPDClient implements MPDCallDoneListener
+public class RidiculouslySimpleMPDClient implements MPDCallDoneListener, RidiculouslySimpleMPDClientI
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleMPDClient.class);
 
@@ -35,6 +36,15 @@ public class RidiculouslySimpleMPDClient implements MPDCallDoneListener
 		this.executor=executor;
 	}
 
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	@Override
 	public void sendCommand(String command, RSMPDListener listener) throws IOException
 	{
 		SyncMPDCall r=new SyncMPDCall(address,port,command,listener,this);

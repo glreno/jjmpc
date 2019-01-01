@@ -44,8 +44,11 @@ public class JBMTest
 
 	public static void main(String [] args)
 	{
+		String device="/dev/input/js0";
+		if ( args.length > 0 ) device=args[0];
+
 		RidiculouslySimpleJoystickDriver jdriver;
-		jdriver=new RidiculouslySimpleJoystickDriver("/dev/input/js0");
+		jdriver=new RidiculouslySimpleJoystickDriver(device);
 
 		ButtonMapper jbm=new ButtonMapper();
 		jdriver.setListener(jbm);
@@ -90,7 +93,7 @@ public class JBMTest
 		// Main loop
 		jdriver.spawn();
 
-		exitj.button(new BState((short)0,(short)0,(short)0));
+		//exitj.button(new BState((short)0,(short)0,(short)0));
 	}
 }
 

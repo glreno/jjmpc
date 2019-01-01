@@ -11,7 +11,7 @@ import java.io.IOException;
 import com.rfacad.buttons.BState;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.mpd.interfaces.RSMPDListener;
-import com.rfacad.mpd.RidiculouslySimpleMPDClient;
+import com.rfacad.mpd.interfaces.RidiculouslySimpleMPDClientI;
 
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
@@ -19,14 +19,14 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 {
 	private static final Logger log = LogManager.getLogger(CmdMpd.class);
 	
-	protected RidiculouslySimpleMPDClient mpdDriver;
+	protected RidiculouslySimpleMPDClientI mpdDriver;
 	protected String command;
 	private CountDownLatch latch;
 	private boolean retval;
 	protected List<String> response;
 	
 
-	public CmdMpd(RidiculouslySimpleMPDClient md,String cmd)
+	public CmdMpd(RidiculouslySimpleMPDClientI md,String cmd)
 	{
 		mpdDriver=md;
 		command=cmd;
@@ -53,7 +53,7 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 			}
 			return retval;
 		}
-		catch (IOException e) {
+		catch (IOException|RejectedExecutionException e) {
 			log.error("Exception contacting MPD",e);
 			return false;
 		}

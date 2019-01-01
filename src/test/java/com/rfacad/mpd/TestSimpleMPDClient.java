@@ -235,6 +235,45 @@ public class TestSimpleMPDClient extends AbstractMPDClientTest {
 	}
 
 	@Test
+	public void shouldNotHangOnCannotConnect() throws InterruptedException, IOException
+	{
+		log.info("TEST START shouldNotHangOnError()");
+		RSMPDListener listener=new RSMPDListener() {
+			@Override
+			public void ok(List<String> responses) {
+				log.info("Got OK");
+				fail("Got OK");
+			}
+			
+			@Override
+			public void not_ok(String completioncode, List<String> responses) {
+				log.info("Got NOT OK");
+			}
+		};
+		startMockServer(new MockServerHandler() {
+			@Override
+			public void handle(BufferedReader in, PrintWriter out) throws IOException {
+				throw new SocketException("Socket closed"); // this string is magic
+			}
+		});
+		log.info("Sending test command");
+		driver.setPort(driver.getPort()-1);
+		driver.sendCommand("This is a test",listener);
+		
+		// While it's sleeping, the client will contact the driver,
+		// fail, and exit. Unless something is horribly wrong,
+		// the clientThread will exit before shutdown is called.
+		log.info("Hang test sleeping");
+		Thread.sleep(10000);
+		log.info("Hang test sending shutdown");
+		driver.shutdown();
+		clientThreadDone.await(10,TimeUnit.SECONDS);
+		assertTrue("Client thread failed to shut down",clientThreadShutDown);
+		log.info("Hang test complete");
+	}
+
+	
+	@Test
 	public void shouldNotHangOnClose() throws InterruptedException, IOException
 	{
 		log.info("TEST START shouldNotHangOnClose()");

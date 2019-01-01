@@ -21,25 +21,28 @@ public class CmdPlayMode extends CmdMpd implements ButtonCommand
 	public boolean button(BState state)
 	{
 		String s=status.get("single");
-		if (s!=null) try {
-			int mode=Integer.parseInt(s);
-			mode = 1 - mode;
-			setCommand("single "+mode);
-			log.debug("single - {}",mode);
-			boolean ret = super.button(state);
-			if ( ret ) {
-				// Success. Update state variable
-				if ( mode == 1 ) {
-					state.set("mode","Track once");
+		if (s!=null)
+		{
+			try {
+				int mode=Integer.parseInt(s);
+				mode = 1 - mode;
+				setCommand("single "+mode);
+				log.debug("single - {}",mode);
+				boolean ret = super.button(state);
+				if ( ret ) {
+					// Success. Update state variable
+					if ( mode == 1 ) {
+						state.set("mode","Track once");
+					}
+					else {
+						state.set("mode","Playlist once");
+					}
 				}
-				else {
-					state.set("mode","Playlist once");
-				}
+				return ret;
 			}
-			return ret;
-		}
-		catch (NumberFormatException e) {
-			log.warn("Bad single state: {}",s);
+			catch (NumberFormatException e) {
+				log.warn("Bad single state: {}",s);
+			}
 		}
 		return false;
 	}

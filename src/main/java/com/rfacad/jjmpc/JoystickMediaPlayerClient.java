@@ -28,19 +28,51 @@ public class JoystickMediaPlayerClient
 	private CmdMpdStatus status;
 
 	public static void main(String [] args) {
+		// Really should be getting this from a resource file
+		int state=0;
+		String device="/dev/input/js0";
+		String host="localhost";
+		String port="6600";
+		for(String s: args)
+		{
+			if ("-p".equals(s)) {
+				state=1;
+			}
+			else if ( "-h".equals(s) ) {
+				state=2;
+			}
+			else if ( "-j".equals(s) ) {
+				state=3;
+			}
+			else {
+				if (state==1) {
+					port=s;
+					state=0;
+				}
+				else if ( state==2) {
+					host=s;
+					state=0;
+				}
+				else if ( state==3) {
+					device=s;
+					state=0;
+				}
+			}
+		}
+		int portnum=Integer.parseInt(port);
 		log.info("Starting up.");
-		JoystickMediaPlayerClient jjmpc = new JoystickMediaPlayerClient();
+		JoystickMediaPlayerClient jjmpc = new JoystickMediaPlayerClient(device,host,portnum);
 		jjmpc.loadCommands();
-		jjmpc.start();
 		jjmpc.startupScript();
+		jjmpc.start();
 	}
 
-	public JoystickMediaPlayerClient() {
+	public JoystickMediaPlayerClient(String device,String host,int port) {
 		// Really bad idea to use hardcoded paths
-		jdriver=new RidiculouslySimpleJoystickDriver("/dev/input/js0");
+		jdriver=new RidiculouslySimpleJoystickDriver(device);
 		jbm=new ButtonMapper();
 		jdriver.setListener(jbm);
-		mdriver=new RidiculouslySimpleMPDClient("localhost",6600);
+		mdriver=new RidiculouslySimpleMPDClient(host,port);
 		exitj=new CmdExitJoystickDriver(jdriver);
 		exitm=new CmdExitMpdDriver(mdriver);
 		status=new CmdMpdStatus(mdriver);

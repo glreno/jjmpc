@@ -21,14 +21,17 @@ public class CmdVolume extends CmdMpd implements ButtonCommand
 	public boolean button(BState state)
 	{
 		String volstring=status.get("volume");
-		if (volstring!=null) try {
-			int vol=Integer.parseInt(volstring);
-			vol += delta;
-			setCommand("setvol "+vol);
-			return super.button(state);
-		}
-		catch (NumberFormatException e) {
-			log.warn("Bad volume state: {}",volstring);
+		if (volstring!=null)
+		{
+			try {
+				int vol=Integer.parseInt(volstring);
+				vol += delta;
+				setCommand("setvol "+vol);
+				return super.button(state);
+			}
+			catch (NumberFormatException e) {
+				log.warn("Bad volume state: {}",volstring);
+			}
 		}
 		return false;
 	}

@@ -4,14 +4,14 @@ import java.util.*;
 
 import com.rfacad.buttons.BState;
 import com.rfacad.buttons.ButtonCommand;
-import com.rfacad.mpd.RidiculouslySimpleMPDClient;
+import com.rfacad.mpd.interfaces.RidiculouslySimpleMPDClientI;
 
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdMpdStatus extends CmdMpd implements ButtonCommand
 {
 	private Map<String,String> stats;
-	public CmdMpdStatus(RidiculouslySimpleMPDClient md)
+	public CmdMpdStatus(RidiculouslySimpleMPDClientI md)
 	{
 		super(md,"status");
 		stats=Collections.emptyMap();
