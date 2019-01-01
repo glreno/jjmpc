@@ -3,7 +3,7 @@ package com.rfacad.jjmpc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
 
 
@@ -12,17 +12,16 @@ public class CmdPlayMode extends CmdMpd implements ButtonCommand
 {
 	private static final Logger log = LogManager.getLogger(CmdPlayMode.class);
 	
-	private CmdMpdStatus status;
-	public CmdPlayMode(CmdMpdStatus status)
+	public CmdPlayMode(CmdMpd status)
 	{
 		super(status,"nop");
-		this.status=status;
 	}
 	public boolean button(BState state)
 	{
-		String s=status.get("single");
-		if (s!=null)
+		Object o=state.get("single");
+		if (o!=null)
 		{
+			String s=o.toString();
 			try {
 				int mode=Integer.parseInt(s);
 				mode = 1 - mode;

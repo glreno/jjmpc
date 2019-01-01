@@ -3,6 +3,8 @@ package com.rfacad.buttons;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rfacad.buttons.interfaces.BState;
+
 import static org.junit.Assert.*;
 
 
@@ -20,7 +22,7 @@ public class MockCmd implements ButtonCommand
 	}
 	public boolean button(BState state)
 	{
-		calls.add(new BState(state));
+		calls.add((new ButtonState((ButtonState)state)));
 		return ret;
 	}
 	

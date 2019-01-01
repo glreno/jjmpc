@@ -3,23 +3,24 @@ package com.rfacad.buttons;
 import java.util.*;
 import java.util.concurrent.*;
 
+import com.rfacad.buttons.interfaces.BState;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class BState 
+public class ButtonState implements BState
 {
 	private short id;
 	private short prev;
 	private short value;
 	private Map<String,Object> map;
-	public static String SHIFT="SHIFTS";
 
-	public BState(short id,short prev,short value) {
+	public ButtonState(short id,short prev,short value) {
 		this.id=id;
 		this.prev=prev;
 		this.value=value;
 		this.map=new ConcurrentHashMap<>();
 	}
 	
-	public BState(BState o) {
+	/*pkg*/ ButtonState(ButtonState o) {
 		this.id=o.id;
 		this.prev=o.prev;
 		this.value=o.value;
@@ -58,4 +59,5 @@ public class BState
 		}
 		return ret;
 	}
+	
 }

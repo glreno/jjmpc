@@ -11,7 +11,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.ButtonState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.mpd.interfaces.RSMPDListener;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
@@ -39,7 +40,7 @@ public class TestMpdCommands {
 			}
 		};
 		status=new CmdMpdStatus(mpd);
-		BState bstate=new BState(S0,S0,S0);
+		BState bstate=new ButtonState(S0,S0,S0);
 		boolean ret=status.button(bstate);
 		assertFalse(ret);
 	}
@@ -56,7 +57,7 @@ public class TestMpdCommands {
 			}
 		};
 		status=new CmdMpdStatus(mpd);
-		BState bstate=new BState(S0,S0,S0);
+		BState bstate=new ButtonState(S0,S0,S0);
 		boolean ret=status.button(bstate);
 		assertFalse(ret);
 	}
@@ -66,25 +67,27 @@ public class TestMpdCommands {
 	{
 		CmdPlayPause pp=new CmdPlayPause(status);
 		
-		BState bstate=new BState(S0,S0,S0);
-		assertNull(status.get("state"));
+		BState bstate=null;
 		assertNull(mpd.getStat("state"));
 		
 		// First press: no initial state, "PLAY"
+		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertNull(status.get("state"));
+		assertNull(bstate.get("state"));
 		pp.button(bstate);
 		assertEquals("play",mpd.getStat("state"));
 		
 		// Second press: "PAUSE"
+		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("play",status.get("state"));
+		assertEquals("play",bstate.get("state"));
 		pp.button(bstate);
 		assertEquals("pause",mpd.getStat("state"));
 		
 		// Third press: "PLAY"
+		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("pause",status.get("state"));
+		assertEquals("pause",bstate.get("state"));
 		pp.button(bstate);
 		assertEquals("play",mpd.getStat("state"));
 	}
@@ -95,12 +98,12 @@ public class TestMpdCommands {
 		mpd.setStat("volume", "50");
 		CmdVolume v=new CmdVolume(status,10);
 		
-		BState bstate=new BState(S0,S0,S0);
-		assertNull(status.get("volume"));
+		BState bstate=null;
 		assertEquals("50",mpd.getStat("volume"));
 		
+		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("50",status.get("volume"));
+		assertEquals("50",bstate.get("volume"));
 		v.button(bstate);
 		
 		assertEquals("60",mpd.getStat("volume"));
@@ -108,6 +111,7 @@ public class TestMpdCommands {
 		// and a bad volume state
 		mpd.setStat("volume", "foo");
 		assertEquals("foo",mpd.getStat("volume"));
+		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
 		v.button(bstate);
 		assertEquals("foo",mpd.getStat("volume"));
@@ -121,25 +125,27 @@ public class TestMpdCommands {
 		CmdPlayMode v=new CmdPlayMode(status);
 		
 		// Initial state - Track Once
-		BState bstate=new BState(S0,S0,S0);
-		assertNull(status.get("single"));
+		BState bstate=null;
 		assertEquals("1",mpd.getStat("single"));
 		
 		// First press: set playlist-once mode
+		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("1",status.get("single"));
+		assertEquals("1",bstate.get("single"));
 		v.button(bstate);
 		assertEquals("0",mpd.getStat("single"));
 		assertEquals("Playlist once",bstate.get("mode"));
 		
 		// Second press: set track-once mode
+		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("0",status.get("single"));
+		assertEquals("0",bstate.get("single"));
 		v.button(bstate);
 		assertEquals("1",mpd.getStat("single"));
 		assertEquals("Track once",bstate.get("mode"));
 
 		// and a bad state
+		bstate=new ButtonState(S0,S0,S0);
 		mpd.setStat("single", "foo");
 		assertEquals("foo",mpd.getStat("single"));
 		status.button(bstate);

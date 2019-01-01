@@ -2,8 +2,9 @@ package com.rfacad.buttons.mapper;
 
 import java.util.*;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
+import com.rfacad.buttons.ButtonState;
 import com.rfacad.joystick.interfaces.RSJDListener;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
@@ -103,7 +104,7 @@ public class ButtonMapper implements RSJDListener
 		}
 		if ( commands != null )
 		{
-			BState state=new BState(id,prev,value);
+			BState state=new ButtonState(id,prev,value);
 			state.set(BState.SHIFT,shifts);
 			execute(commands,state);
 		}

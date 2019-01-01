@@ -3,7 +3,7 @@ package com.rfacad.mpd;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
 
 

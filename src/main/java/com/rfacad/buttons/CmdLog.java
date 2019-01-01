@@ -4,6 +4,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.buttons.interfaces.BState;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdLog implements ButtonCommand
 {
@@ -28,12 +30,13 @@ public class CmdLog implements ButtonCommand
 		{
 			msg = "null state passed to CmdLog";
 		}
-		if ( logstate && state != null )
+		if ( logstate && state != null && state instanceof ButtonState)
 		{
-			log.log(level,"ID:"+Integer.toHexString(state.getButtonId())
-			+" Prev:"+state.getPrevValue()
-			+" Value:"+state.getNewValue()
-			+" Shifts:"+state.get(BState.SHIFT));
+			ButtonState bs=(ButtonState)state;
+			log.log(level,"ID:"+Integer.toHexString(bs.getButtonId())
+			+" Prev:"+bs.getPrevValue()
+			+" Value:"+bs.getNewValue()
+			+" Shifts:"+bs.get(BState.SHIFT));
 		}
 		if ( msg != null )
 		{

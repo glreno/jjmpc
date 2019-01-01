@@ -3,6 +3,8 @@ package com.rfacad.buttons;
 import org.apache.logging.log4j.Level;
 import org.junit.Test;
 
+import com.rfacad.buttons.interfaces.BState;
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class TestCmdLog
 {
@@ -28,7 +30,7 @@ public class TestCmdLog
 	public void shouldLogState() {
 		CmdLog cmd1 = new CmdLog(Level.INFO,null,true);
 		short s0=(short)0;
-		BState state=new BState(s0, s0, s0);
+		BState state=new ButtonState(s0, s0, s0);
 		cmd1.button(state);
 	}
 }

@@ -1,21 +1,19 @@
 package com.rfacad.jjmpc;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
 
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdPlayPause extends CmdMpd implements ButtonCommand
 {
-	CmdMpdStatus status;
-	public CmdPlayPause(CmdMpdStatus status)
+	public CmdPlayPause(CmdMpd status)
 	{
 		super(status,"play");
-		this.status=status;
 	}
 	public boolean button(BState state)
 	{
-		String playstate=status.get("state");
+		Object playstate=state.get("state");
 		if ( "play".equals(playstate)) {
 			setCommand("pause");
 		}

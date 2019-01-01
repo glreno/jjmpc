@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-import com.rfacad.buttons.BState;
+import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
 import com.rfacad.mpd.interfaces.RSMPDListener;
 import com.rfacad.mpd.interfaces.RidiculouslySimpleMPDClientI;
