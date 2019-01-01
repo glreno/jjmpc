@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.rfacad.joystick.interfaces.RSJDListener;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class RidiculouslySimpleJoystickDriver implements Runnable
+public class RidiculouslySimpleJoystickDriver
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleJoystickDriver.class);
 
@@ -19,6 +19,10 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 	protected boolean keepgoing;
 	protected RSJDListener listener;
 	protected Map<Short,Short> cache;
+	private static final Short S_0 = new Short((short)0);
+	private static final Short S_1 = new Short((short)1);
+	private Thread thr=null;
+	private BufferedInputStream in=null;
 
 	public RidiculouslySimpleJoystickDriver(String filename)
 	{
@@ -35,9 +39,37 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 	public void shutdown()
 	{
 		this.keepgoing=false;
+		try
+		{
+			InputStream in2=in;
+			in=null;
+			if ( in2 != null )
+			{
+				in2.close();
+			}
+		}
+		catch (IOException e)
+		{
+			;
+		}
+		thr.interrupt();
+		thr=null;
 	}
-
-	public void run()
+	
+	public void spawn()
+	{
+		if ( thr==null )
+		{
+			thr=new Thread() {
+				public void run() {
+					innerRun();
+				}
+			};
+			thr.start();
+		}
+	}
+	
+	protected void innerRun()
 	{
 		log.info("Joystick thread starting.");
 		while(keepgoing)
@@ -72,8 +104,9 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 
 	protected void mainloop()
 	{
+		// Flush cache on re-open
 		cache=null;
-		BufferedInputStream in=null;
+		
 		byte [] buf=new byte[8];
 		try
 		{
@@ -118,16 +151,24 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 				}
 			}
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
-			e.printStackTrace();
+			if ( !keepgoing )
+			{
+				e.printStackTrace();
+			}
 			return;
 		}
 		finally
 		{
 			try
 			{
-				in.close();
+				InputStream in2=in;
+				in=null;
+				if ( in2 != null )
+				{
+					in2.close();
+				}
 			}
 			catch (IOException e)
 			{
@@ -156,19 +197,27 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 		// that the prev value is one.
 		// Only store the new value if there is a prev value,
 		// or the new value is not 1 or 0.
+		//
+		// Note that there is a bad assumption there:
+		// if an item starts with 1 and then not-zero,
+		// the 1 will not appear as a previous. (the not-zero press
+		// will assume that the previous value is zero)
+		// If this is a problem for any particular button,
+		// then you just need to pre-load the cache.
+		// Not that there is a way to do that.
 		boolean doCacheIt=false;
 		if ( prev==null ) {
 			if ( value == 0 )
 			{
-				prev=1;
+				prev=S_1;
 			}
 			else if ( value == 1 )
 			{
-				prev=0;
+				prev=S_0;
 			}
 			else
 			{
-				prev=0;
+				prev=S_0;
 				doCacheIt = true;
 			}
 		}
@@ -180,8 +229,11 @@ public class RidiculouslySimpleJoystickDriver implements Runnable
 		{
 			log.debug("Button: "+hex(id)+" prev="+hex(prev)+" value="+hex(value));
 		}
-		listener.button(id,prev,value);
-
+		if ( listener != null )
+		{
+			listener.button(id,prev,value);
+		}
+		
 		if ( doCacheIt )
 		{
 			cache.put(id,value);

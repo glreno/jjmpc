@@ -87,7 +87,7 @@ public class JBMTest
 		new CmdSay("Greetings").button(null);
 
 		// Main loop
-		jdriver.run();
+		jdriver.spawn();
 
 		exit.button(new BState((short)0,(short)0,(short)0));
 	}

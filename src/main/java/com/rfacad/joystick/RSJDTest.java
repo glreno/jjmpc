@@ -25,13 +25,15 @@ public class RSJDTest implements RSJDListener
 
 	public static void main(String [] args)
 	{
-		RSJDTest test=new RSJDTest();
-		test.driver.run();
+		String device="/dev/input/js0";
+		if ( args.length > 0 ) device=args[0];
+		RSJDTest test=new RSJDTest(device);
+		test.driver.spawn();
 	}
 
-	public RSJDTest()
+	public RSJDTest(String device)
 	{
-		driver=new RidiculouslySimpleJoystickDriver("/dev/input/js0");
+		driver=new RidiculouslySimpleJoystickDriver(device);
 		driver.setListener(this);
 	}
 }

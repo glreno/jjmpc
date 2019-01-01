@@ -42,7 +42,7 @@ public class JoystickMediaPlayerClient
 
 	public void start() {
 		new Thread(mdriver).start();
-		new Thread(jdriver).start();
+		jdriver.spawn();
 	}
 
 	protected void startupScript() {
