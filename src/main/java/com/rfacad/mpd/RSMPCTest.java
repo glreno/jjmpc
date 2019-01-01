@@ -1,6 +1,10 @@
 package com.rfacad.mpd;
 
 import java.util.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 
 import com.rfacad.mpd.interfaces.RSMPDListener;
@@ -8,34 +12,57 @@ import com.rfacad.mpd.interfaces.RSMPDListener;
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class RSMPCTest implements RSMPDListener
 {
+	private static final Logger log = LogManager.getLogger(RSMPCTest.class);
 	private RidiculouslySimpleMPDClient driver;
 
 	public static void main(String [] args)
 	{
-		RSMPCTest test=new RSMPCTest();
-		new Thread( test.driver ).start();
+		//new Thread( test.driver ).start();
 		StringBuilder buf=new StringBuilder();
+		int state=0;
+		String host="localhost";
+		String port="6600";
 		for(String s: args)
 		{
-			buf.append(s);
-			buf.append(' ');
+			if ("-p".equals(s)) {
+				state=1;
+			}
+			else if ( "-h".equals(s) ) {
+				state=2;
+			}
+			else {
+				if (state==1) {
+					port=s;
+					state=0;
+				}
+				else if ( state==2) {
+					host=s;
+					state=0;
+				}
+				else {
+					buf.append(s);
+					buf.append(' ');
+				}
+			}
 		}
+		int portnum=Integer.parseInt(port);
+		RSMPCTest test=new RSMPCTest(host,portnum);
 		try
 		{
 			System.out.println("Sending: "+buf.toString());
-			test.driver.sendCommand(buf.toString());
+			test.driver.sendCommand(buf.toString(),test);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			test.driver.closeSocket();
+			//test.driver.closeSocket();
 			test.driver.shutdown();
 		}
 	}
 
-	public RSMPCTest()
+	public RSMPCTest(String host,int port)
 	{
-		driver=new RidiculouslySimpleMPDClient("localhost",6600);
-		driver.setListener(this);
+		log.info("Connecting to {}:{}",host,port);
+		driver=new RidiculouslySimpleMPDClient(host,port);
 	}
 
 	public void ok(List<String> response)

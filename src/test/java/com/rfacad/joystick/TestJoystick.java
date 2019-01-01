@@ -81,6 +81,9 @@ public class TestJoystick
 		}
 		protected BufferedInputStream openStream() throws IOException
 		{
+			// The ByteArrayInputStream will EOF after it finishes,
+			// forcing the driver to call openStream() again
+			// if anyone tries to read it again.
 			if ( current >= contentList.size() )
 			{
 				throw new IOException("End of content");
@@ -239,6 +242,7 @@ public class TestJoystick
 	@Test
 	public void shouldNotHangOnError() throws InterruptedException
 	{
+		log.info("TEST START shouldNotHangOnError()");
 		// This test uses the real file I/O, pointed at
 		// a non-existant file, to generate errors trying to read it
 		log.info("TEST START shouldNotHangOnError()");
@@ -264,9 +268,10 @@ public class TestJoystick
 	@Test
 	public void shouldNotHangOnShutdown() throws InterruptedException, IOException
 	{
+		log.info("TEST START shouldNotHangOnShutdown()");
 		// What if shutdown is called when the driver is
 		// waiting for I/O? InputStream.read() doesn't time out,
-		// after all. I'lll have to use a pipe-type input stream here.
+		// after all. I'll have to use a pipe-type input stream here.
 		final PipedOutputStream src=new PipedOutputStream();
 		final CountDownLatch end=new CountDownLatch(1);
 		final RidiculouslySimpleJoystickDriver jd = new RidiculouslySimpleJoystickDriver("") {

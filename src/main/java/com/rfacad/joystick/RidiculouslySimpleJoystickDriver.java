@@ -155,7 +155,7 @@ public class RidiculouslySimpleJoystickDriver
 		{
 			if ( !keepgoing )
 			{
-				e.printStackTrace();
+				log.error("Exception thrown by joystick driver",e);
 			}
 			return;
 		}

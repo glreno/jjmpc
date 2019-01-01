@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 
 import org.junit.Test;
 
+@com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class TestRSJDTest {
 	
 	@Test

@@ -1,5 +1,8 @@
 package com.rfacad.jjmpc;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.rfacad.buttons.BState;
 import com.rfacad.buttons.ButtonCommand;
 
@@ -7,6 +10,8 @@ import com.rfacad.buttons.ButtonCommand;
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdPlayMode extends CmdMpd implements ButtonCommand
 {
+	private static final Logger log = LogManager.getLogger(CmdPlayMode.class);
+	
 	private CmdMpdStatus status;
 	public CmdPlayMode(CmdMpdStatus status)
 	{
@@ -20,7 +25,7 @@ public class CmdPlayMode extends CmdMpd implements ButtonCommand
 			int mode=Integer.parseInt(s);
 			mode = 1 - mode;
 			setCommand("single "+mode);
-			//System.err.println("single - "+mode);
+			log.debug("single - {}",mode);
 			boolean ret = super.button(state);
 			if ( ret ) {
 				// Success. Update state variable
@@ -34,7 +39,7 @@ public class CmdPlayMode extends CmdMpd implements ButtonCommand
 			return ret;
 		}
 		catch (NumberFormatException e) {
-			System.err.println("Bad single state: "+s);
+			log.warn("Bad single state: {}",s);
 		}
 		return false;
 	}

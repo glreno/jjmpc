@@ -1,189 +1,64 @@
 package com.rfacad.mpd;
 
 import java.io.*;
-import java.util.*;
-import java.net.*;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.mpd.SyncMPDCall.MPDCallDoneListener;
 import com.rfacad.mpd.interfaces.RSMPDListener;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class RidiculouslySimpleMPDClient implements Runnable
+public class RidiculouslySimpleMPDClient implements MPDCallDoneListener
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleMPDClient.class);
 
-	private boolean keepgoing=true;
-	private boolean pauseForRetry=false;
-	private RSMPDListener listener=null;
-	private Socket socket=null;
-	private PrintWriter out=null;
-	private BufferedReader in=null;
 	private String address;
 	private int port;
+	private ExecutorService executor;
+	private Queue<SyncMPDCall> jobs;
 
 	public RidiculouslySimpleMPDClient(String address, int port)
 	{
 		this.address=address;
 		this.port=port;
+		this.executor=Executors.newCachedThreadPool();
+		this.jobs=new ConcurrentLinkedQueue<>();
 	}
-
-	public void setListener(RSMPDListener listener)
+	
+	public void setExecutor(ExecutorService executor)
 	{
-		this.listener=listener;
+		this.executor=executor;
 	}
 
-	public void closeSocket()
+	public void sendCommand(String command, RSMPDListener listener) throws IOException
 	{
-		if ( socket != null  && ! socket.isClosed() )
-		{
-			try {
-				socket.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		socket=null;
+		SyncMPDCall r=new SyncMPDCall(address,port,command,listener,this);
+		jobs.add(r);
+		executor.execute(r);
 	}
-
-	public void openSocket() throws IOException
-	{
-		socket=new Socket(address,port);
-		out=new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-		in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		//System.out.println("Socket opened to "+address+" port "+port);
-		String s=in.readLine();
-		//System.out.println(s);
-	}
-
-
+	
 	public void shutdown()
 	{
-		closeSocket();
-		this.keepgoing=false;
+		log.info("Shutting down executor, there are {} jobs",jobs.size());
+		// stop processing new jobs
+		executor.shutdown();
+		// Warn the jobs
+		for(SyncMPDCall r:jobs)
+		{
+			r.shutdown();
+		}
+		// interrupt any jobs that are still running
+		executor.shutdownNow();
+		log.info("executor shut down");
 	}
 
-	public void run()
-	{
-		log.info("MPD Client thread starting.");
-		while(keepgoing)
-		{
-			if ( pauseForRetry )
-			{
-				try
-				{
-					Thread.sleep(1000);
-				}
-				catch (InterruptedException e)
-				{
-					;
-				}
-			}
-			try
-			{
-				mainloop();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		log.info("MPD Client thread ending.");
-	}
-
-	public void sendCommand(String command) throws IOException
-	{
-		if ( out == null )
-		{
-			closeSocket();
-		}
-		if ( socket == null )
-		{
-			openSocket();
-		}
-		if ( out == null )
-		{
-			throw new IOException("Unable to open socket");
-		}
-		//System.out.println("Sending:"+command);
-		out.println(command);
-		out.flush();
-	}
-
-	protected void mainloop()
-	{
-		// Listen for text on the socket
-		// Read everything up to OK or ACK
-		// Send to the listener
-		if ( in == null )
-		{
-			pauseForRetry=true;
-			//System.out.println("wee paws");
-		}
-		else
-		{
-			List<String> response=new ArrayList<String>();
-			String s;
-			try
-			{
-				//System.out.println("Waiting...");
-				while ( (s = in.readLine()) != null )
-				{
-					//System.out.println(s);
-					if ( s.startsWith("OK")) {
-						sendok(response);
-						response=new ArrayList<String>();
-					}
-					else if ( s.startsWith("ACK")) {
-						senderr(s,response);
-						response=new ArrayList<String>();
-					}
-					else
-					{
-						response.add(s);
-					}
-				}
-			}
-			catch (SocketException e) {
-				if ("Socket closed".equals(e.getMessage())) {
-					closeSocket();
-					//System.out.println("Socket closed");
-				}
-				else {
-				closeSocket();
-				e.printStackTrace();
-				response.add(e.getMessage());
-				senderr("Exception thrown",response);
-				}
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				response.add(e.getMessage());
-				senderr("Exception thrown",response);
-			}
-			//System.out.println("Done waiting.");
-		}
-	}
-
-	private void sendok(List<String> response)
-	{
-		try{
-			listener.ok(response);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void senderr(String code,List<String> response)
-	{
-		try{
-			listener.not_ok(code,response);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void callDone(SyncMPDCall c) {
+		jobs.remove(c);
 	}
 }

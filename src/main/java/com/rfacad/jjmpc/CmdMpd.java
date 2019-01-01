@@ -2,6 +2,10 @@ package com.rfacad.jjmpc;
 
 import java.util.*;
 import java.util.concurrent.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 
 import com.rfacad.buttons.BState;
@@ -13,6 +17,8 @@ import com.rfacad.mpd.RidiculouslySimpleMPDClient;
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdMpd implements ButtonCommand, RSMPDListener
 {
+	private static final Logger log = LogManager.getLogger(CmdMpd.class);
+	
 	protected RidiculouslySimpleMPDClient mpdDriver;
 	protected String command;
 	private CountDownLatch latch;
@@ -36,22 +42,19 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 	{
 		try {
 			retval=false;
-			mpdDriver.setListener(this);
 			response=null;
 			latch=new CountDownLatch(1);
-			mpdDriver.sendCommand(command);
+			mpdDriver.sendCommand(command,this);
 			try {
 				latch.await();
 			}
 			catch (InterruptedException e) {
 				// retval is false
 			}
-			mpdDriver.setListener(null);
 			return retval;
 		}
 		catch (IOException e) {
-			e.printStackTrace();
-			mpdDriver.closeSocket();
+			log.error("Exception contacting MPD",e);
 			return false;
 		}
 	}
@@ -65,8 +68,8 @@ public class CmdMpd implements ButtonCommand, RSMPDListener
 
 	public void not_ok(String code,List<String> response)
 	{
-		System.err.println(code);
-		System.err.println(response);
+		log.warn(code);
+		log.warn(response);
 		this.retval=false;
 		this.response=response;
 		this.latch.countDown();
