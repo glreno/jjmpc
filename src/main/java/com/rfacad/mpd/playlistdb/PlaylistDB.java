@@ -462,6 +462,38 @@ public class PlaylistDB implements PlaylistDBI {
 	}
 	
 	@Override
+	public String getPrevPlaylistFolderFirstPlaylist(BState bs) {
+		String curr=getMostRecentPlaylist(bs);
+		if ( curr==null )
+		{
+			return null;
+		}
+
+		// Identify the current folder
+		int sep=curr.indexOf(SEP);
+		String folder=curr.substring(0,sep);
+
+		// Go to prev folder.
+		
+		List<String> folders = listPlaylistFolders(bs);
+		for(int i=1;i<folders.size();i++)
+		{
+			if ( folder.equals(folders.get(i)))
+			{
+				// found it. Return first playlist in the prev folder.
+				List<String> playlistsInPrevFolder = listPlaylists(bs, folders.get(i-1));
+				if ( playlistsInPrevFolder != null && !playlistsInPrevFolder.isEmpty() )
+				{
+					return playlistsInPrevFolder.get(0);
+				}
+			}
+		}
+
+		// curr folder is the first one, or does not exist!
+		return null;
+	}
+
+	@Override
 	public String getNextPlaylist(BState bs)
 	{
 		String curr=getMostRecentPlaylist(bs);
@@ -484,6 +516,38 @@ public class PlaylistDB implements PlaylistDBI {
 		}
 		// curr is either the last playlist in the folder, or it's not there at all.
 		// So go to next folder.
+		
+		List<String> folders = listPlaylistFolders(bs);
+		for(int i=0;i<folders.size()-1;i++)
+		{
+			if ( folder.equals(folders.get(i)))
+			{
+				// found it. Return first playlist in the next folder.
+				List<String> playlistsInNextFolder = listPlaylists(bs, folders.get(i+1));
+				if ( playlistsInNextFolder != null && !playlistsInNextFolder.isEmpty() )
+				{
+					return playlistsInNextFolder.get(0);
+				}
+			}
+		}
+		// curr folder is the last one, or does not exist!
+		return getFirstPlaylist(bs);
+	}
+
+
+	@Override
+	public String getNextPlaylistFolderFirstPlaylist(BState bs) {
+		String curr=getMostRecentPlaylist(bs);
+		if ( curr==null )
+		{
+			return getFirstPlaylist(bs);
+		}
+		
+		// Identify the current folder
+		int sep=curr.indexOf(SEP);
+		String folder=curr.substring(0,sep);
+
+		// Go to the next folder.
 		
 		List<String> folders = listPlaylistFolders(bs);
 		for(int i=0;i<folders.size()-1;i++)
