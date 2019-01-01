@@ -7,13 +7,13 @@ import com.rfacad.buttons.interfaces.BState;
 import com.rfacad.buttons.ButtonCommand;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
-public class CmdVolume extends CmdMpd implements ButtonCommand
+public class CmdVolume extends AbstractCmdMpd implements ButtonCommand
 {
 	private static final Logger log = LogManager.getLogger(CmdVolume.class);
 	private int delta;
 	public CmdVolume(CmdMpd status,int delta)
 	{
-		super(status,"nop");
+		super(status);
 		this.delta=delta;
 	}
 	public boolean button(BState state)
@@ -24,8 +24,7 @@ public class CmdVolume extends CmdMpd implements ButtonCommand
 			try {
 				int vol=Integer.parseInt(volstring.toString());
 				vol += delta;
-				setCommand("setvol "+vol);
-				return super.button(state);
+				return sendCommand(state,"setvol "+vol);
 			}
 			catch (NumberFormatException e) {
 				log.warn("Bad volume state: {}",volstring);

@@ -14,6 +14,7 @@ import com.rfacad.joystick.CmdExitJoystickDriver;
 import com.rfacad.joystick.RidiculouslySimpleJoystickDriver;
 import com.rfacad.mpd.CmdExitMpdDriver;
 import com.rfacad.mpd.RidiculouslySimpleMPDClient;
+import com.rfacad.mpd.playlistdb.PlaylistDB;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class JoystickMediaPlayerClient
@@ -23,6 +24,7 @@ public class JoystickMediaPlayerClient
 	private static String PLUCK="/usr/lib/libreoffice/share/gallery/sounds/pluck.wav";
 	private RidiculouslySimpleJoystickDriver jdriver;
 	private RidiculouslySimpleMPDClient mdriver;
+	private PlaylistDB db;
 	private ButtonMapper jbm;
 	private CmdExitJoystickDriver exitj;
 	private CmdExitMpdDriver exitm;
@@ -74,6 +76,7 @@ public class JoystickMediaPlayerClient
 		jbm=new ButtonMapper();
 		jdriver.setListener(jbm);
 		mdriver=new RidiculouslySimpleMPDClient(host,port);
+		db=new PlaylistDB(mdriver);
 		exitj=new CmdExitJoystickDriver(jdriver);
 		exitm=new CmdExitMpdDriver(mdriver);
 		status=new CmdMpdStatus(mdriver);
@@ -152,8 +155,8 @@ public class JoystickMediaPlayerClient
 		//
 		// Y/A - track next/prev
 		//
-		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("301 Y track prev"),status, new CmdTrack(status,"previous")); // Y
-		jbm.map(0x0101,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("101 A track prev"),status, new CmdTrack(status,"next")); // Y
+		jbm.map(0x0301,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("301 Y track prev"),status, new CmdTrackPrev(status)); // Y
+		jbm.map(0x0101,1,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("101 A track prev"),status, new CmdTrackNext(status,db)); // Y
 
 		
 		// X/B - playlist next/prev (announce name)

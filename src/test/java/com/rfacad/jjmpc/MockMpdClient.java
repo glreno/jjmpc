@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,10 @@ public class MockMpdClient implements RidiculouslySimpleMPDClientI {
 	public void expectOkRequest(String request,List<String> response)
 	{
 		okResponses.put(request, new ArrayList<>(response));
+	}
+	public void expectOkRequest(String request)
+	{
+		okResponses.put(request, Collections.emptyList());
 	}
 	public void removeExpectedOkRequest(String request)
 	{

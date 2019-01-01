@@ -389,6 +389,13 @@ public class PlaylistDB implements PlaylistDBI {
 		return true;
 	}
 	
+	// Unit test only!!!
+	public void setMostRecentPlaylist(BState bs,String playlistid)
+	{
+		bs.set(PLAYLIST_LOADED, playlistid);
+		mostRecentlyLoadedPlaylist = playlistid;
+	}
+	
 	@Override
 	public String getMostRecentPlaylist(BState bs)
 	{
@@ -430,7 +437,12 @@ public class PlaylistDB implements PlaylistDBI {
 			}
 		}
 		
-		// Give up, and report the FIRST playlist
+		// Give up. This is probably at startup, nothing is loaded.
+		return null;
+	}
+	
+	public String getFirstPlaylist(BState bs)
+	{
 		List<String> folders = listPlaylistFolders(bs);
 		if ( folders!=null && !folders.isEmpty() )
 		{
@@ -441,6 +453,47 @@ public class PlaylistDB implements PlaylistDBI {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public String getNextPlaylist(BState bs)
+	{
+		String curr=getMostRecentPlaylist(bs);
+		if ( curr==null )
+		{
+			return getFirstPlaylist(bs);
+		}
+		
+		// Get the list of playlists in this folder
+		int sep=curr.indexOf(SEP);
+		String folder=curr.substring(0,sep);
+		List<String> playlistsInCurrFolder = listPlaylists(bs, folder);
+		for(int i=0;i<playlistsInCurrFolder.size()-1;i++)
+		{
+			if ( curr.equals(playlistsInCurrFolder.get(i)))
+			{
+				// found it, return the next folder.
+				return playlistsInCurrFolder.get(i+1);
+			}
+		}
+		// curr is either the last playlist in the folder, or it's not there at all.
+		// So go to next folder.
+		
+		List<String> folders = listPlaylistFolders(bs);
+		for(int i=0;i<folders.size()-1;i++)
+		{
+			if ( folder.equals(folders.get(i)))
+			{
+				// found it. Return first playlist in the next folder.
+				List<String> playlistsInNextFolder = listPlaylists(bs, folders.get(i+1));
+				if ( playlistsInNextFolder != null && !playlistsInNextFolder.isEmpty() )
+				{
+					return playlistsInNextFolder.get(0);
+				}
+			}
+		}
+		// curr folder is the last one, or does not exist!
+		return getFirstPlaylist(bs);
 	}
 
 	protected String extractPlaylistNameFromPlaylistInfo(String currId,List<String> info)

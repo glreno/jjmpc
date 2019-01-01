@@ -6,14 +6,17 @@ import com.rfacad.buttons.interfaces.BState;
 
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public interface PlaylistDBI {
+	// playlist ID consists of folder name + SEP + playlist dir name.
+	// So the file "Monty Python/Monty Python and The Holy Grail/grail01.mp3"
+	// is in the playlist: "Monty Python--Monty Python and The Holy Grail"
 	static String SEP="--";
 	
 	// Keys for storing these things in the BState
-	static String FOLDERS = "PlaylistFolderList";
-	static String PLAYLISTS_IN_FOLDER_PREFIX = "PlaylistsInFolder:";
-	static String FILES_IN_PLAYLIST_PREFIX = "FilesInPlaylist:";
-	static String FILES_IN_M3U_PREFIX = "FilesInM3U:";
-	static String PLAYLIST_LOADED = "PlaylistLoaded";
+	static String FOLDERS = "PlaylistFolderList"; // List<String> (folder names, e.g. "Monty Python")
+	static String PLAYLISTS_IN_FOLDER_PREFIX = "PlaylistsInFolder:"; // List<String> (playlistids)
+	static String FILES_IN_PLAYLIST_PREFIX = "FilesInPlaylist:"; // List<String> (filenames, not paths; e.g. grail01.mp3)
+	static String FILES_IN_M3U_PREFIX = "FilesInM3U:"; // List<String> (filepaths, relative to music dir; e.g. "Monty Python/Monty Python and The Holy Grail/grail01.mp3"
+	static String PLAYLIST_LOADED = "PlaylistLoaded"; // String (playlistid)
 	
 	/**
 	 * @param bs
@@ -45,7 +48,13 @@ public interface PlaylistDBI {
 	boolean loadPlaylist(BState bs, String playlistid);
 	
 	/**
-	 * @return ID of the most recently loaded playlist; if nothing loaded, then the ID of the first playlist.
+	 * @return ID of the most recently loaded playlist; if nothing loaded, then return null.
 	 */
 	String getMostRecentPlaylist(BState bs);
+
+	/**
+	 * @return ID of the playlist AFTER the most recently loaded playlist; if nothing loaded, then the ID of the first playlist.
+	 */
+	String getNextPlaylist(BState bs);
+
 }
