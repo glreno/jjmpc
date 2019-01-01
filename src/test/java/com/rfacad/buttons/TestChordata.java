@@ -33,12 +33,12 @@ public class TestChordata
 		// notgoal should never ever be called!
 		
 		// PRESS
-		bm.map(BTN_A,0,1,S0,chordata.mkSet(1));
-		bm.map(BTN_B,0,1,S0,chordata.mkSet(2));
+		bm.map(BTN_A,0,1,ButtonMapper.NO_SHIFT,chordata.mkSet(1));
+		bm.map(BTN_B,0,1,ButtonMapper.NO_SHIFT,chordata.mkSet(2));
 		
 		// RELEASE
-		bm.map(BTN_A,1,0,S0,chordata.mkCheck(1));
-		bm.map(BTN_B,1,0,S0,chordata.mkCheck(2));
+		bm.map(BTN_A,1,0,ButtonMapper.NO_SHIFT,chordata.mkCheck(1));
+		bm.map(BTN_B,1,0,ButtonMapper.NO_SHIFT,chordata.mkCheck(2));
 	}
 	
 	@Test
@@ -50,8 +50,8 @@ public class TestChordata
 		MockCmd notgoal=new MockCmd();
 
 		ChordCommand chordata=new ChordCommand(1,stop,notgoal);
-		bm.map(BTN_C,0,1,S0,chordata.mkSet(1));
-		bm.map(BTN_C,1,0,S0,chordata.mkCheck(1));
+		bm.map(BTN_C,0,1,ButtonMapper.NO_SHIFT,chordata.mkSet(1));
+		bm.map(BTN_C,1,0,ButtonMapper.NO_SHIFT,chordata.mkCheck(1));
 
 		stop.assertCalls(0);
 		bm.button(BTN_C, S0, S1); // press A

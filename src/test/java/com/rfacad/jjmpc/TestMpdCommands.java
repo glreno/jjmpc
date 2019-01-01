@@ -73,21 +73,21 @@ public class TestMpdCommands {
 		// First press: no initial state, "PLAY"
 		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertNull(bstate.get("state"));
+		assertNull(bstate.getString("state"));
 		pp.button(bstate);
 		assertEquals("play",mpd.getStat("state"));
 		
 		// Second press: "PAUSE"
 		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("play",bstate.get("state"));
+		assertEquals("play",bstate.getString("state"));
 		pp.button(bstate);
 		assertEquals("pause",mpd.getStat("state"));
 		
 		// Third press: "PLAY"
 		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("pause",bstate.get("state"));
+		assertEquals("pause",bstate.getString("state"));
 		pp.button(bstate);
 		assertEquals("play",mpd.getStat("state"));
 	}
@@ -103,7 +103,7 @@ public class TestMpdCommands {
 		
 		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("50",bstate.get("volume"));
+		assertEquals("50",bstate.getString("volume"));
 		v.button(bstate);
 		
 		assertEquals("60",mpd.getStat("volume"));
@@ -131,18 +131,18 @@ public class TestMpdCommands {
 		// First press: set playlist-once mode
 		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("1",bstate.get("single"));
+		assertEquals("1",bstate.getString("single"));
 		v.button(bstate);
 		assertEquals("0",mpd.getStat("single"));
-		assertEquals("Playlist once",bstate.get("mode"));
+		assertEquals("Playlist once",bstate.getString("mode"));
 		
 		// Second press: set track-once mode
 		bstate=new ButtonState(S0,S0,S0);
 		status.button(bstate);
-		assertEquals("0",bstate.get("single"));
+		assertEquals("0",bstate.getString("single"));
 		v.button(bstate);
 		assertEquals("1",mpd.getStat("single"));
-		assertEquals("Track once",bstate.get("mode"));
+		assertEquals("Track once",bstate.getString("mode"));
 
 		// and a bad state
 		bstate=new ButtonState(S0,S0,S0);

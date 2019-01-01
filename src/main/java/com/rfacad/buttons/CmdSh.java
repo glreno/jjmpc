@@ -111,7 +111,7 @@ public class CmdSh implements ButtonCommand
 		String[] ret;
 		ret=new String[cmd.length];
 		for(int i=0;i<cmd.length;i++) {
-			ret[i]=state.substitute(cmd[i]);
+			ret[i]=state.substituteStrings(cmd[i]);
 		}
 		return ret;
 	}
