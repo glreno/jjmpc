@@ -1,4 +1,4 @@
-package com.rfacad.jjmpc;
+package com.rfacad.joystick;
 
 import static org.junit.Assert.*;
 

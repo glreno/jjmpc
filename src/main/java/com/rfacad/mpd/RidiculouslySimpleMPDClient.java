@@ -1,4 +1,4 @@
-package com.rfacad.jjmpc;
+package com.rfacad.mpd;
 import java.io.*;
 import java.util.*;
 import java.net.*;

@@ -2,6 +2,9 @@ package com.rfacad.jjmpc;
 
 import java.util.*;
 
+import com.rfacad.buttons.BState;
+import com.rfacad.buttons.ButtonCommand;
+
 /**
 * Combine two (or more) button presses so that both buttons must
 * be pressed for a command to occur.

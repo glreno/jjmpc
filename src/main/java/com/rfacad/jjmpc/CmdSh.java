@@ -5,6 +5,10 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.buttons.BState;
+import com.rfacad.buttons.ButtonCommand;
+
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdSh implements ButtonCommand
 {

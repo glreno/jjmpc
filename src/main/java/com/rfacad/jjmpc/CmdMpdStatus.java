@@ -2,6 +2,11 @@ package com.rfacad.jjmpc;
 
 import java.util.*;
 
+import com.rfacad.buttons.BState;
+import com.rfacad.buttons.ButtonCommand;
+import com.rfacad.mpd.RidiculouslySimpleMPDClient;
+
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdMpdStatus extends CmdMpd implements ButtonCommand
 {

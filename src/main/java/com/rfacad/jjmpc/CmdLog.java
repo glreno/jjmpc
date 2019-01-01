@@ -3,6 +3,11 @@ package com.rfacad.jjmpc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rfacad.buttons.BState;
+import com.rfacad.buttons.ButtonCommand;
+import com.rfacad.buttons.ButtonMapper;
+
+
 @com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class CmdLog implements ButtonCommand
 {

@@ -1,4 +1,4 @@
-package com.rfacad.jjmpc;
+package com.rfacad;
 /*
  * jjmpc
  * Copyright 2018 Gerald Reno, Jr
