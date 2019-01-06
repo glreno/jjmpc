@@ -1,6 +1,14 @@
 package com.rfacad.joystick;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.AsynchronousCloseException;
+import java.nio.channels.Channel;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -9,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.rfacad.joystick.interfaces.RSJDListener;
 
-@com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
+@com.rfacad.Copyright("Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class RidiculouslySimpleJoystickDriver
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleJoystickDriver.class);
@@ -22,7 +30,7 @@ public class RidiculouslySimpleJoystickDriver
 	private static final Short S_0 = new Short((short)0);
 	private static final Short S_1 = new Short((short)1);
 	private Thread thr=null;
-	private BufferedInputStream in=null;
+	private ReadableByteChannel in=null;
 
 	public RidiculouslySimpleJoystickDriver(String filename)
 	{
@@ -41,7 +49,7 @@ public class RidiculouslySimpleJoystickDriver
 		this.keepgoing=false;
 		try
 		{
-			InputStream in2=in;
+			Channel in2=in;
 			in=null;
 			if ( in2 != null )
 			{
@@ -100,9 +108,10 @@ public class RidiculouslySimpleJoystickDriver
 		log.info("Joystick thread ending.");
 	}
 	
-	protected BufferedInputStream openStream() throws IOException
+	protected ReadableByteChannel openStream() throws IOException
 	{
-		return new BufferedInputStream(new FileInputStream(filename));
+		Path path=new File(filename).toPath();
+		return FileChannel.open(path,StandardOpenOption.READ);
 	}
 
 	protected void mainloop()
@@ -110,7 +119,6 @@ public class RidiculouslySimpleJoystickDriver
 		// Flush cache on re-open
 		cache=null;
 		
-		byte [] buf=new byte[8];
 		try
 		{
 			in=openStream();
@@ -123,8 +131,11 @@ public class RidiculouslySimpleJoystickDriver
 		}
 		try
 		{
+			ByteBuffer buf=ByteBuffer.allocate(8);
+			buf.order(ByteOrder.LITTLE_ENDIAN);
 			while (keepgoing)
 			{
+				buf.clear();
 				int read=in.read(buf);
 				if ( read == 8 )
 				{
@@ -136,16 +147,22 @@ public class RidiculouslySimpleJoystickDriver
 						StringBuilder s=new StringBuilder(26);
 						s.append("Btn: ");
 						for(int i=0;i<8;i++) {
-							if ( (buf[i]&0xff) < 16 ) s.append('0');
-							s.append(Integer.toHexString(buf[i]&0xff));
+							byte b=buf.get(i);
+							if ( (b&0xff) < 16 ) s.append('0');
+							s.append(Integer.toHexString(b&0xff));
 							if ( i%2 != 0 ) s.append(' ');
 						}
 						log.trace(s);
 					}
 					
-					short id=mkshort(buf[7],buf[6]);
-					short value=mkshort(buf[5],buf[4]);
+					short id=buf.getShort(6);
+					short value=buf.getShort(4);
 					report(id,value);
+				}
+				else if ( read == 0 )
+				{
+					log.trace("Got 0 bytes reading joystick");
+					try { Thread.sleep(500);} catch (InterruptedException e) {}
 				}
 				else
 				{
@@ -153,6 +170,11 @@ public class RidiculouslySimpleJoystickDriver
 					return;
 				}
 			}
+		}
+		catch (AsynchronousCloseException e)
+		{
+			log.debug("Connection to {} has been closed.",filename);
+			return;
 		}
 		catch (Exception e)
 		{
@@ -166,7 +188,7 @@ public class RidiculouslySimpleJoystickDriver
 		{
 			try
 			{
-				InputStream in2=in;
+				Channel in2=in;
 				in=null;
 				if ( in2 != null )
 				{
@@ -244,11 +266,6 @@ public class RidiculouslySimpleJoystickDriver
 		}
 	}
 
-	private static final short mkshort(byte hi,byte lo)
-	{
-		return (short) ( ( (hi&0xff)<<8 ) | (lo&0xff) );
-	}
-	
 	public static String hex(short i)
 	{
 		StringBuilder ret=new StringBuilder(4);

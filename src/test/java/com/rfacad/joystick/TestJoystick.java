@@ -2,11 +2,10 @@ package com.rfacad.joystick;
 
 import static org.junit.Assert.*;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Pipe;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +17,7 @@ import org.junit.Test;
 
 import com.rfacad.joystick.interfaces.RSJDListener;
 
-@com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
+@com.rfacad.Copyright("Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public class TestJoystick
 {
 	private static final Logger log = LogManager.getLogger(RidiculouslySimpleJoystickDriver.class);
@@ -79,7 +78,7 @@ public class TestJoystick
 			// ... and keep going until told to stop!
 			threadEnd.countDown();
 		}
-		protected BufferedInputStream openStream() throws IOException
+		protected ReadableByteChannel openStream() throws IOException
 		{
 			// The ByteArrayInputStream will EOF after it finishes,
 			// forcing the driver to call openStream() again
@@ -89,7 +88,12 @@ public class TestJoystick
 				throw new IOException("End of content");
 			}
 			byte[] content = contentList.get(current++);
-			return new BufferedInputStream(new ByteArrayInputStream(content));
+			Pipe p=Pipe.open();
+			ByteBuffer src=ByteBuffer.wrap(content);
+			p.sink().write(src);
+			p.sink().close();
+			return p.source();
+			//return new BufferedInputStream(new ByteArrayInputStream(content));
 		}
 	}
 	
@@ -272,12 +276,14 @@ public class TestJoystick
 		// What if shutdown is called when the driver is
 		// waiting for I/O? InputStream.read() doesn't time out,
 		// after all. I'll have to use a pipe-type input stream here.
-		final PipedOutputStream src=new PipedOutputStream();
+		//final PipedOutputStream src=new PipedOutputStream();
+		final Pipe src=Pipe.open();
 		final CountDownLatch end=new CountDownLatch(1);
 		final RidiculouslySimpleJoystickDriver jd = new RidiculouslySimpleJoystickDriver("") {
-			protected BufferedInputStream openStream() throws IOException
+			protected ReadableByteChannel openStream() throws IOException
 			{
-				return new BufferedInputStream(new PipedInputStream(src));
+				//return new BufferedInputStream(new PipedInputStream(src));
+				return src.source();
 			}
 			protected void innerRun() {
 				try {

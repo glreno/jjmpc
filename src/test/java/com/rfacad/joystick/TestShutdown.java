@@ -89,7 +89,7 @@ public class TestShutdown {
 		
 		// That button press SHOULD cause the driver to exit.
 		try {
-			latch.await(5, TimeUnit.SECONDS);
+			latch.await(5, TimeUnit.MINUTES);
 		} catch (InterruptedException e1) {
 		}
 		long count1 = latch.getCount();
