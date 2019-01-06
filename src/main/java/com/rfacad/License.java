@@ -1,7 +1,7 @@
 package com.rfacad;
 /*
  * jjmpc
- * Copyright 2018 Gerald Reno, Jr
+ * Copyright 2018-2019 Gerald Reno, Jr
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@ package com.rfacad;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@com.rfacad.Copyright("Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
+@com.rfacad.Copyright("Copyright (c) 2018-2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0")
 public interface License {
  	public static final String LICENSE = ""
 +" * jjmpc\r\n"
-+" * Copyright 2018 Gerald Reno, Jr\r\n"
++" * Copyright 2018-2019 Gerald Reno, Jr\r\n"
 +" * \r\n"
 +" * Licensed under the Apache License, Version 2.0 (the \"License\");\r\n"
 +" * you may not use this file except in compliance with the License.\r\n"
