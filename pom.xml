@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 <!--
-Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0
+Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache License 2.0
 -->
 
 <modelVersion>4.0.0</modelVersion>
@@ -34,7 +34,7 @@ Copyright (c) 2018 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
 	<dependency>
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
-		<version>4.4</version>
+		<version>4.12</version>
 		<type>jar</type>
 		<scope>test</scope>
 		<optional>true</optional>
