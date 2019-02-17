@@ -177,8 +177,8 @@ public class JoystickMediaPlayerClient
 		//
 		// DPad Vert - volume up & down
 		//
-		jbm.map(0x0102,ButtonMapper.NEGATIVE,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("102 Up"),status,new CmdVolume(status,10));
-		jbm.map(0x0102,ButtonMapper.POSITIVE,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("102 Down"),status,new CmdVolume(status,-10));
+		jbm.map(0x0102,ButtonMapper.NEGATIVE,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("102 Up"),status,new CmdVolume(status,5));
+		jbm.map(0x0102,ButtonMapper.POSITIVE,0,ButtonMapper.AT_LEAST_ONE_SHIFT,CmdLog.debug("102 Down"),status,new CmdVolume(status,-5));
 
 		//
 		// DPad Horz - ffwd/rev, prev/next playlist folder (announce name) when both shifts are pressed
