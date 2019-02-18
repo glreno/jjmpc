@@ -15,44 +15,118 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
 <description>A Joystick-controlled MPD client</description>
 
 <licenses>
-	<license>
-		<name>Apache License 2.0</name>
-		<url>http://www.apache.org/licenses/LICENSE-2.0</url>
-		<distribution>repo</distribution>
-	</license>
+    <license>
+        <name>Apache License 2.0</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        <distribution>repo</distribution>
+    </license>
 </licenses>
 
 
 <properties>
-	<jdkVersion>1.8</jdkVersion>
-	<maven.compiler.source>1.8</maven.compiler.source>
-	<maven.compiler.target>1.8</maven.compiler.target>
+    <jdkVersion>1.8</jdkVersion>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 </properties>
 
 <dependencies>
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.12</version>
-		<type>jar</type>
-		<scope>test</scope>
-		<optional>true</optional>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.logging.log4j</groupId>
-		<artifactId>log4j-api</artifactId>
-		<version>2.11.0</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.logging.log4j</groupId>
-		<artifactId>log4j-core</artifactId>
-		<version>2.11.0</version>
-	</dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <type>jar</type>
+        <scope>test</scope>
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>2.11.0</version>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.11.0</version>
+        <scope>runtime</scope>
+    </dependency>
 </dependencies>
 
 <build>
-	<defaultGoal>install</defaultGoal>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.1.1</version>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        <includeScope>runtime</includeScope>
+                        <excludeScope>test</excludeScope>
+                    </configuration>
+                  </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <artifactId>jdeb</artifactId>
+            <groupId>org.vafer</groupId>
+            <version>1.7</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>jdeb</goal>
+                    </goals>
+                    <configuration>
+                        <dataSet>
+                            <data>
+                                <src>${project.build.directory}/${project.build.finalName}.jar</src>
+                                <type>file</type>
+                                <mapper>
+                                    <type>perm</type>
+                                    <prefix>/var/lib/${artifactId}</prefix>
+                                </mapper>
+                            </data>
+                            <data>
+                                <src>${project.basedir}/src/main/scripts</src>
+                                <type>directory</type>
+                                <mapper>
+                                    <type>perm</type>
+                                    <prefix>/var/lib/${artifactId}</prefix>
+                                </mapper>
+                            </data>
+                            <data>
+                                <src>${project.build.directory}/lib</src>
+                                <type>directory</type>
+                                <mapper>
+                                    <type>perm</type>
+                                    <prefix>/var/lib/${artifactId}</prefix>
+                                </mapper>
+                            </data>
+                            <data>
+                                <type>files</type>
+                                <paths>
+                                    <path>README.md</path>
+                                    <path>VERSIONS.md</path>
+                                    <path>NOTICE</path>
+                                </paths>
+                                <dst>/var/lib/${artifactId}</dst>
+                            </data>
+                        </dataSet>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
 </build>
 
 </project>

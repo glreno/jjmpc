@@ -1,0 +1,2 @@
+/bin/rm -f /etc/rc?.d/S99jjmpc
+/bin/rm -f /etc/init.d/S99jjmpc
