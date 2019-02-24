@@ -1,0 +1,15 @@
+[Unit]
+Description=Joypad-controlled MPD Client
+
+[Service]
+User=pi
+# The configuration file application.properties should be here:
+WorkingDirectory=/var/lib/jjmpc 
+ExecStart=/usr/bin/java -classpath log4j-api-2.11.0.jar:log4j-core-2.11.0.jar:jjmpc-0.01-SNAPSHOT.jar com.rfacad.jjmpc.JoystickMediaPlayerClient
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

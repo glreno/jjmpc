@@ -97,12 +97,19 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
                                 </mapper>
                             </data>
                             <data>
-                                <src>${project.basedir}/src/main/scripts</src>
+                                <src>${project.basedir}/src/main/resources</src>
                                 <type>directory</type>
                                 <mapper>
                                     <type>perm</type>
-                                    <filemode>755</filemode>
                                     <prefix>/var/lib/${artifactId}</prefix>
+                                </mapper>
+                            </data>
+                            <data>
+                                <src>${project.basedir}/src/main/service</src>
+                                <type>directory</type>
+                                <mapper>
+                                    <type>perm</type>
+                                    <prefix>/etc/systemd/system</prefix>
                                 </mapper>
                             </data>
                             <data>
