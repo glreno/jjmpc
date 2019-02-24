@@ -6,3 +6,4 @@ cd /etc/rc4.d
 /bin/ln -s ../init.d/jjmpc S99jjmpc
 cd /etc/rc5.d
 /bin/ln -s ../init.d/jjmpc S99jjmpc
+/etc/init.d/jjmpc

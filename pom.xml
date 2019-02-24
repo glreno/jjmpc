@@ -101,6 +101,7 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
                                 <type>directory</type>
                                 <mapper>
                                     <type>perm</type>
+                                    <filemode>755</filemode>
                                     <prefix>/var/lib/${artifactId}</prefix>
                                 </mapper>
                             </data>

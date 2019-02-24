@@ -6,4 +6,4 @@ Architecture: all
 Maintainer: glreno <46288004+glreno@users.noreply.github.com>
 Description: Joypad controlled MPD client
 Distribution: development
-Depends: mpd, mpc, openjdk-8-jdk-headless
+Depends: mpd, mpc, openjdk-8-jdk-headless, espeak
