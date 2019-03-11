@@ -43,13 +43,13 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>
         <version>2.11.0</version>
-        <scope>runtime</scope>
+        <scope>compile</scope>
     </dependency>
     <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-core</artifactId>
         <version>2.11.0</version>
-        <scope>runtime</scope>
+        <scope>compile</scope>
     </dependency>
 </dependencies>
 
@@ -93,7 +93,7 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
                                 <type>file</type>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/var/lib/${artifactId}</prefix>
+                                    <prefix>/var/lib/${project.artifactId}</prefix>
                                 </mapper>
                             </data>
                             <data>
@@ -101,7 +101,7 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
                                 <type>directory</type>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/var/lib/${artifactId}</prefix>
+                                    <prefix>/var/lib/${project.artifactId}</prefix>
                                 </mapper>
                             </data>
                             <data>
@@ -117,7 +117,7 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
                                 <type>directory</type>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/var/lib/${artifactId}</prefix>
+                                    <prefix>/var/lib/${project.artifactId}</prefix>
                                 </mapper>
                             </data>
                             <data>
@@ -127,7 +127,7 @@ Copyright (c) 2019 Gerald Reno, Jr. All rights reserved. Licensed under Apache L
                                     <path>VERSIONS.md</path>
                                     <path>NOTICE</path>
                                 </paths>
-                                <dst>/var/lib/${artifactId}</dst>
+                                <dst>/var/lib/${project.artifactId}</dst>
                             </data>
                         </dataSet>
                     </configuration>
